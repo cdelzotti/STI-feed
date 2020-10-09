@@ -1,5 +1,5 @@
 
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware, BadRequestException } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { EventData } from '../data/data.entity';
 import { MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
@@ -11,12 +11,26 @@ import { MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
  */
 export class EventExtractorMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: Function) {
+    // Parse dateDebut
     if (req.body.dateDebut != undefined){
-      req.body.dateDebut = MoreThanOrEqual(req.body.dateDebut);
+      if (req.body.dateDebut[0] == "more"){
+        req.body.dateDebut = MoreThanOrEqual(req.body.dateDebut[1]);
+      } else if (req.body.dateDebut[0] == "less") {
+        req.body.dateDebut = LessThanOrEqual(req.body.dateDebut[1]);
+      } else {
+        throw new BadRequestException("Could not parse dateDebut. Is it really a list ?")
+      }
     }
+    // Parse dateFin
     if (req.body.dateFin != undefined){
-      req.body.dateFin = LessThanOrEqual(req.body.dateFin);
+      if (req.body.dateFin[0] == "more"){
+        req.body.dateFin = MoreThanOrEqual(req.body.dateFin[1]);
+      } else if (req.body.dateFin[0] == "less"){
+        req.body.dateFin = LessThanOrEqual(req.body.dateFin[1]);
+      } else {
+        throw new BadRequestException("Could not parse dateFin. Is it really a list ?")
+      }
     }
-      next();
-  }
+    next();
+    }
 }

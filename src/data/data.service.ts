@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import {Workbook, Worksheet} from 'exceljs';
 import { Repository } from 'typeorm';
 import { EventData } from './data.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { DataResponse } from './data.dto'
+
 
 @Injectable()
 export class APRetreiver {
@@ -42,12 +43,26 @@ export class APRetreiver {
                 currentEvent.info = worksheet.getCell(`N${row}`).value as string;
                 currentEvent.relevant = false;
 
+                // Get alike elements stored
+                let dbContent : EventData[] = await this.eventRepository.find({
+                    type : currentEvent.type,
+                    localisation : currentEvent.localisation,
+                    impact : currentEvent.impact,
+                    source : currentEvent.source,
+                    info : currentEvent.info,
+                })
+                // Check dates
+                let matches : number = this.workAroundForDates(currentEvent, dbContent); // Alike event counter
+
                 // Insert into database
-                this.eventRepository.insert(currentEvent).catch((reason : any) => {
-                    console.log("BD AP update : record failed")
-                }).then((result : any) => {
-                    console.log("BD AP update : record saved")
-                });
+                if (matches == 0){
+                    await this.eventRepository.insert(currentEvent).catch((reason : any)=>{
+                        console.log("Adding AP failed");
+                        throw new InternalServerErrorException("Something went wrong while retreiving events");
+                    }).then(() => {
+                        console.log("AP added");
+                    });
+                }
             }
         }
 
@@ -56,5 +71,72 @@ export class APRetreiver {
             status : "Thanks for launching an update",
             error : false,
         }
+    }
+
+    /**
+     * An alternative to classic date comparison
+     * 
+     * @param currentEvent : And event
+     * @param dbContent : An list of events
+     * 
+     * @returns the number of times an event with the same dates as currentEvent has been found in
+     * dbContent
+     */
+    workAroundForDates(currentEvent : EventData, dbContent : EventData[]) : number {
+         // Check dates
+         let matches : number = 0; // Alike event counter
+         // Get currentEvent dates in a nice list
+         try{
+            var currentEventStart : number[] = [
+                currentEvent.dateDebut.getFullYear(),
+                currentEvent.dateDebut.getMonth(),
+                currentEvent.dateDebut.getDate()
+            ]
+            var currentEventEnd : number[] = [
+                currentEvent.dateFin.getFullYear(),
+                currentEvent.dateFin.getMonth(),
+                currentEvent.dateFin.getDate()
+            ]
+         } catch (e) {
+            console.log("Couldn't parse date, is there a null date ?")
+            return 1;
+         }
+         for (let index = 0; index < dbContent.length; index++) {
+             // Get dbContent[index] dates in a nice list
+             let startDate : number[] = [
+                 dbContent[index].dateDebut.getFullYear(),
+                 dbContent[index].dateDebut.getMonth(),
+                 dbContent[index].dateDebut.getDate()
+             ];
+             let endDate : number[] = [
+                 dbContent[index].dateFin.getFullYear(),
+                 dbContent[index].dateFin.getMonth(),
+                 dbContent[index].dateFin.getDate()
+            ]
+             // Count matches
+             if (this.arrayEquals(startDate, currentEventStart) && this.arrayEquals(endDate,currentEventEnd)) {
+                 matches++;
+             }
+         }
+         return matches;
+    }
+
+    /**
+     * Check if two arrays are equals
+     * @param a1 an array
+     * @param a2 an other array
+     * @returns true if a1 contains the same thing in the same order that a2, false otherwise
+     */
+    arrayEquals(a1, a2) : boolean{
+        // TODO : assert a1 and a2 are arrays
+        if (a1.length == a2.length) {
+            for (let index = 0; index < a1.length; index++) {
+                if (a1[index] != a2[index]) {
+                    return false;
+                }
+                return true;
+            }
+        }
+        return false;
     }
 }

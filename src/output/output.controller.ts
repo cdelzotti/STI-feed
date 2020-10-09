@@ -1,5 +1,4 @@
 import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
-import { AppService } from '../app.service';
 import { CheckItem } from './output.dto'
 
 @Controller("output/")
@@ -8,6 +7,6 @@ export class OutputController {
 
   @Get()
   getHello(): string {
-    return "This module will handle output";
+    return "This will be the public interface showing output";
   }
 }
