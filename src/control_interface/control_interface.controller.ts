@@ -23,7 +23,7 @@ export class ControlInterfaceController {
    * matching the description of EventData
    * @returns Every event matching body
    */
-  @Get("event/")
+  @Post("select-event/")
   async getEvents(@Body() body) : Promise<EventData[]> {
     // TODO : assert body
     return this.controlInterfaceService.getEvents(body);

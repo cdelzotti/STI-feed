@@ -12,6 +12,6 @@ import { EventExtractorMiddleware } from './control_interface.middleware'
 })
 export class ControlInterfaceModule {
   configure(consumer : MiddlewareConsumer){
-    consumer.apply(EventExtractorMiddleware).forRoutes('/control/event/');
+    consumer.apply(EventExtractorMiddleware).forRoutes('/control/select-event/');
   }
 }

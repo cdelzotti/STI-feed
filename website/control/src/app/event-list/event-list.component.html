@@ -1,0 +1,25 @@
+<h2>Évènements à venir</h2>
+
+<table>
+    <thead>
+        <td>Lieu</td>
+        <td>Impact</td>
+        <td>DateDebut</td>
+        <td>DateFin</td>
+        <td>Source</td>
+        <td>type</td>
+        <td>Message</td>
+        <td>Publier</td>
+    </thead>
+    <tr *ngFor="let event of events">
+        <td>{{ event["localisation"] }}</td>
+        <td>{{ event["dateDebut"] }}</td>
+        <td>{{ event["dateFin"] }}</td>
+        <td>{{ event["impact"] }}</td>
+        <td>{{ event["source"] }}</td>
+        <td>{{ event["type"] }}</td>
+        <td>{{ event["message"] }}</td>
+        <td *ngIf="!event['relevant']"><a class="button fancy-button"><mat-icon>email</mat-icon> Envoyer</a></td>
+        <td *ngIf="event['relevant']"><a class="button fancy-button"><mat-icon>cancel</mat-icon> Annuler</a></td>
+    </tr>
+</table>
