@@ -17,7 +17,6 @@ export class ControlInterfaceService {
      * @returns Every events matching body description
      */
     async getEvents(body) : Promise<EventData[]> {
-
         return this.eventRepository.find(body);
     }
 

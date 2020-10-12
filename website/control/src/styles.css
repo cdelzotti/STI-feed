@@ -77,12 +77,23 @@
     border-radius: 2px;
     font-size: 14px;
     cursor: pointer;
-    background-color: cadetblue;
     border-radius: 5px 5px 5px;
     color: white;
     border: none;
   }
   
+  .publishButton{
+    background-color: green;
+  }
+
+  .unpublishButton{
+    background-color: red;
+  }
+
+  .logginButton{
+    background-color: cadetblue;
+  }
+
   .button:hover, button:hover {
     opacity: 0.8;
     font-weight: normal;
