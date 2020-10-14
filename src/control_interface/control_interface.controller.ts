@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, Post, ParseIntPipe, Param, ParseBoolPipe, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, ParseIntPipe, Param, ParseBoolPipe, Put, Res } from '@nestjs/common';
 import { ControlInterfaceService } from './control_interface.service'
 import { EventData } from '../data/data.entity'
 import { ControlResponse } from './control_interface.dto'
 import * as assert from 'assert'
+import { Response } from 'express'
 
 @Controller("control/")
 export class ControlInterfaceController {
@@ -12,8 +13,8 @@ export class ControlInterfaceController {
    * @returns the control interface
    */
   @Get()
-  getEvent() : string{
-    return "This wil be the control interface"
+  getControlPage(@Res() response : Response) {
+    response.redirect("/control-site/index.html");
   }
 
   /**

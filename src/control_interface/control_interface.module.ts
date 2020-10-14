@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventData } from '../data/data.entity';
 import { ControlInterfaceService } from './control_interface.service';
 import { EventExtractorMiddleware } from './control_interface.middleware'
+import { ServeStaticModule } from '@nestjs/serve-static'
+import { join } from 'path'
 
 @Module({
   imports: [TypeOrmModule.forFeature([EventData])],
