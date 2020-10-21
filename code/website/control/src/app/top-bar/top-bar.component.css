@@ -1,0 +1,13 @@
+#container{
+    display: flex;
+    justify-content: space-between;
+}
+
+#title{
+    order: 1;
+}
+
+
+#log_button{
+    order: 2;
+}

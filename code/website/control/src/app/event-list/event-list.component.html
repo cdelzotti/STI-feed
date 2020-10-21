@@ -1,0 +1,27 @@
+<h2>Évènements à venir</h2>
+
+<a class="button fancy-button publishButton" (click)="addEvent()"><mat-icon>add</mat-icon> Nouveau</a>
+
+<table>
+    <thead>
+        <td>Lieu</td>
+        <td>Impact</td>
+        <td>Début</td>
+        <td>Fin</td>
+        <td>Source</td>
+        <td>Type</td>
+        <td>Message</td>
+        <td>Publier</td>
+    </thead>
+    <tr *ngFor="let event of events">
+        <td>{{ event["localisation"] }}</td>
+        <td>{{ event["impact"] }}</td>
+        <td>{{ beautifulDate(event["dateDebut"]) }}</td>
+        <td>{{ beautifulDate(event["dateFin"]) }}</td>
+        <td>{{ event["source"] }}</td>
+        <td>{{ event["type"] }}</td>
+        <td><a class="button fancy-button publishButton" (click)="addMessage()"><mat-icon>edit</mat-icon></a></td>
+        <td *ngIf="!event['relevant']"><a class="button fancy-button publishButton" (click)="editPublishing(event['id'], true)"><mat-icon>email</mat-icon> Envoyer</a></td>
+        <td *ngIf="event['relevant']"><a class="button fancy-button unpublishButton" (click)="editPublishing(event['id'], false)"><mat-icon>cancel</mat-icon> Annuler</a></td>
+    </tr>
+</table>
