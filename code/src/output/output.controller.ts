@@ -7,12 +7,18 @@ import { Response } from 'express'
 export class OutputController {
   constructor(private readonly outputService: OutputService) {}
 
+  /**
+   * @returns the public website
+   */
   @Get()
   getSite(@Res() response : Response){
     response.redirect("/public-site/index.html");
   }
 
   @Get("event/")
+  /**
+   * @returns the events that are marked as relevant
+   */
   async getPublicEvents(): Promise<EventData[]>{
     return this.outputService.getPublicEvents();
   }

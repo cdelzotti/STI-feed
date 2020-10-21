@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 import { environment } from '../environments/environment'
 
 import { Event } from './event-list/event'
-import { ControlResponse } from './event-list/controlResponse'
 
 let httpOpt = {
   headers : new HttpHeaders({

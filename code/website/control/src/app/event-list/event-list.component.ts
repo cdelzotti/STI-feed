@@ -16,10 +16,19 @@ export class EventListComponent implements OnInit {
   events : Event[]
   controlResponse : ControlResponse
 
+  /**
+   *  Store into `events` every current/incoming events 
+   */
   getEvents():void{
       this.eventService.getEvents().subscribe(events => (this.events = events));
   }
 
+  /**
+   * Publish/Unpublish an event
+   * 
+   * @param id : events identifier 
+   * @param relevance : Must it be pubished or not ?
+   */
   editPublishing(id : number, relevance : boolean) : void{
     this.eventService.publish(id, relevance).subscribe(
       controlResponse => (this.controlResponse = controlResponse)
@@ -31,14 +40,24 @@ export class EventListComponent implements OnInit {
     window.alert("Not implemented yet")
   }
 
+
   addEvent() : void {
     window.alert("Not implemented yet")
   }
 
+  /** 
+   * Angular function called on component load 
+   */
   ngOnInit(): void {
       this.getEvents()
   }
 
+  /**
+   * Transform an ugly date into a nice string
+   * 
+   * @param uglyDate a date formatted as a 'YYY-MM-DDTHH-MM-SS.SZ' string
+   * @returns a nicely formatted date in plain text
+   */
   beautifulDate(uglyDate : string) : string {
     let numberToMonth : string[] = [
       "Janvier",

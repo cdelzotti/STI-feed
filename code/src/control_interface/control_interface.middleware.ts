@@ -6,7 +6,7 @@ import { MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
 
 @Injectable()
 /**
- * Middle where that transforms the request so that it returns the events 
+ * Middleware that transforms the request so that it returns the events 
  * starting after dateDebut and before dateFin.
  */
 export class EventExtractorMiddleware implements NestMiddleware {

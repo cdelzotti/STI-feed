@@ -7,6 +7,8 @@ import { EventExtractorMiddleware } from './control_interface.middleware'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
 
+
+// Module for the control component. Handles editing/getting data and the control website
 @Module({
   imports: [TypeOrmModule.forFeature([EventData])],
   controllers: [ControlInterfaceController],

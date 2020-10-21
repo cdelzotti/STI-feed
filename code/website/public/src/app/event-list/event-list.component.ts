@@ -16,14 +16,26 @@ export class EventListComponent implements OnInit {
   events : Event[]
   controlResponse : ControlResponse
 
+  /**
+   * Get published events
+   */
   getEvents():void{
       this.eventService.getEvents().subscribe(events => (this.events = events));
   }
 
+   /** 
+   * Angular function called on component load 
+   */
   ngOnInit(): void {
       this.getEvents()
   }
 
+   /**
+   * Transform an ugly date into a nice string
+   * 
+   * @param uglyDate a date formatted as a 'YYY-MM-DDTHH-MM-SS.SZ' string
+   * @returns a nicely formatted date in plain text
+   */
   beautifulDate(uglyDate : string) : string {
     let numberToMonth : string[] = [
       "Janvier",
