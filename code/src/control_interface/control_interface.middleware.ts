@@ -14,9 +14,9 @@ export class EventExtractorMiddleware implements NestMiddleware {
     // Parse dateDebut
     if (req.body.dateDebut != undefined){
       if (req.body.dateDebut[0] == "more"){
-        req.body.dateDebut = MoreThanOrEqual(req.body.dateDebut[1]);
+        req.body.dateDebut = {$gte: new Date(req.body.dateDebut[1])};
       } else if (req.body.dateDebut[0] == "less") {
-        req.body.dateDebut = LessThanOrEqual(req.body.dateDebut[1]);
+        req.body.dateDebut = {$lte: new Date(req.body.dateDebut[1])};
       } else {
         throw new BadRequestException("Could not parse dateDebut. Is it really a list ?")
       }
@@ -24,9 +24,9 @@ export class EventExtractorMiddleware implements NestMiddleware {
     // Parse dateFin
     if (req.body.dateFin != undefined){
       if (req.body.dateFin[0] == "more"){
-        req.body.dateFin = MoreThanOrEqual(req.body.dateFin[1]);
+        req.body.dateFin = {$gte: new Date(req.body.dateFin[1])};
       } else if (req.body.dateFin[0] == "less"){
-        req.body.dateFin = LessThanOrEqual(req.body.dateFin[1]);
+        req.body.dateFin = {$lte: new Date(req.body.dateFin[1])};
       } else {
         throw new BadRequestException("Could not parse dateFin. Is it really a list ?")
       }

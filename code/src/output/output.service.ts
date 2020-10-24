@@ -16,9 +16,13 @@ export class OutputService {
      * @returns Every events marked as relevant
      */
     async getPublicEvents() : Promise<EventData[]> {
-
         return this.eventRepository.find({
-            "relevant" : true
+            where : {
+                relevant : true
+            },
+            order : {
+                dateDebut : "ASC"
+            }
         });
     }
 

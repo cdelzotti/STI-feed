@@ -1,8 +1,10 @@
-import { Injectable, Post } from '@nestjs/common';
-import { Db, Repository, Equal } from 'typeorm';
+import { Injectable, Post} from '@nestjs/common';
+import { Db, Repository, Equal, MoreThan} from 'typeorm';
 import { EventData } from '../data/data.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ControlResponse } from './control_interface.dto'
+import { ObjectID } from 'mongodb'
+
 
 @Injectable()
 export class ControlInterfaceService {
@@ -17,7 +19,12 @@ export class ControlInterfaceService {
      * @returns Every events matching body description
      */
     async getEvents(body) : Promise<EventData[]> {
-        return this.eventRepository.find(body);
+        return this.eventRepository.find({
+                where : body,
+                order : {
+                    dateDebut : "ASC"
+                }
+            });
     }
 
     /**
@@ -30,10 +37,12 @@ export class ControlInterfaceService {
      * @requires eventID < max_event_index
      * @returns request reponse
      */
-    async editEvent(eventID: number, event) : Promise<ControlResponse>{
-        await this.eventRepository.update({
-            id : eventID
-        },event).catch( (e) => {
+    async editEvent(eventID: string, event) : Promise<ControlResponse>{
+        let eventFromDB : EventData = await this.eventRepository.findOne(eventID);
+        for (const key in event) {
+            eventFromDB[key] = event[key];
+        }
+        await this.eventRepository.save(eventFromDB).catch( (e) => {
             return {
                 status : `${e}`,
                 error : true
@@ -43,6 +52,7 @@ export class ControlInterfaceService {
             status : "",
             error : false
         };
+        // await this.eventRepository.update(eventID,eventFromDB)
     }
 
     /**

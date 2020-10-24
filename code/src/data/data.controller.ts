@@ -22,7 +22,7 @@ export class DataController {
       this.apRetreiver.APextract(path);
       return {
         update : "AP",
-        status : "Thanks for updating",
+        status : "",
         error : false
       } 
     }

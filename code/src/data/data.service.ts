@@ -68,7 +68,7 @@ export class APRetreiver {
 
         return {
             update : "AP",
-            status : "Thanks for launching an update",
+            status : "",
             error : false,
         }
     }

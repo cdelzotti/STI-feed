@@ -10,11 +10,9 @@ async function bootstrap() {
     AppModule,
   );
   
-  // app.use('/public-site', express.static('website/control/dist/public'));
+  // Serve websites
   app.use('/control-site' ,express.static('website/control/dist/control'));
   app.use('/public-site' ,express.static('website/public/dist/control'));
-  // app.setBaseViewsDir(join(__dirname, 'website'))
-  // app.useStaticAssets(join(__dirname, 'website/control/dist/control/'))
 
   app.enableCors();
   await app.listen(3000);

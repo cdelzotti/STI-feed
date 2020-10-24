@@ -9,11 +9,17 @@ import { EventData } from './data/data.entity'
 
 @Module({
   imports: [UserModule, ControlInterfaceModule, DataModule, OutputModule, TypeOrmModule.forRoot({
-    type : "sqlite",
-    database : "./db.sqlite",
-    entities : [EventData],
-    synchronize : true
-  
+    type : "mongodb",
+    host : "localhost",
+    database : "stifeed",
+    port : 27017,
+    synchronize : true,
+    username : "stiuser",
+    password : "root",
+    entities : [
+      EventData
+    ],
+    useUnifiedTopology : true
   })],
   controllers: [],
   providers: [],
