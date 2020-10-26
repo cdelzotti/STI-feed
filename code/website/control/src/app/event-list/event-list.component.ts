@@ -83,17 +83,17 @@ export class EventListComponent implements OnInit {
 
 
   addEvent() : void {
-        // // Open dialog box
-        // const dialogRef = this.dialog.open(EventListCreateDialog, {
-        //   data : {
-        //     fromPage : this
-        //   }
-        // });
+        // Open dialog box
+        const dialogRef = this.dialog.open(EventListCreateDialog, {
+          data : {
+            fromPage : this
+          }
+        });
     
-        // // Closing callback
-        // dialogRef.afterClosed().subscribe(result => {
-        //   console.log(`Dialog result: ${result}`);
-        // });
+        // Closing callback
+        dialogRef.afterClosed().subscribe(result => {
+          console.log(`Dialog result: ${result}`);
+        });
   }
 
   /** 
@@ -164,37 +164,37 @@ export class EventListEditDialog {
 }
 
 
-// // The dialogBox creation content
-// @Component({
-//   selector: 'event-list-create-dialog',
-//   templateUrl: 'event-list.dialog-create.html',
-// })
-// export class EventListCreateDialog{
+// The dialogBox creation content
+@Component({
+  selector: 'event-list-create-dialog',
+  templateUrl: 'event-list.dialog-create.html',
+})
+export class EventListCreateDialog{
   
-//   // Component that generated the dialogBox
-//   fromPage : EventListComponent;
+  // Component that generated the dialogBox
+  fromPage : EventListComponent;
 
-//   // Event variables
-//   localisation : string;
-//   impact : string;
-//   info : string;
-//   dateDebut : Date;
-//   dateFin : Date;
-//   source : string;
-//   relevant : boolean;
-//   message : string;
-//   type : string;
+  // Event variables
+  localisation : string;
+  impact : string;
+  info : string;
+  dateDebut : Date;
+  dateFin : Date;
+  source : string;
+  relevant : boolean;
+  message : string;
+  type : string;
 
 
-//   constructor(
-//     public dialogRef: MatDialogRef<EventListEditDialog>,
-//     @Optional() @Inject(MAT_DIALOG_DATA) public data,
-//     private eventService : EventsService
-//   ) {
-//     this.fromPage = data.fromPage;
-//   }
+  constructor(
+    public dialogRef: MatDialogRef<EventListCreateDialog>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data,
+    private eventService : EventsService
+  ) {
+    this.fromPage = data.fromPage;
+  }
 
-//   submit(){
-
-//   }
-// }
+  submit(){
+    console.warn("PAF")
+  }
+}

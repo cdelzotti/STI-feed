@@ -10,14 +10,15 @@ import { FormsModule } from '@angular/forms'
 
 import { AppComponent } from './app.component';
 import { TopBarComponent } from './top-bar/top-bar.component'
-import { EventListComponent, EventListEditDialog } from './event-list/event-list.component'
+import { EventListComponent, EventListEditDialog, EventListCreateDialog } from './event-list/event-list.component'
 
 @NgModule({
   declarations: [
     AppComponent,
     TopBarComponent,
     EventListComponent,
-    EventListEditDialog
+    EventListEditDialog,
+    EventListCreateDialog
   ],
   imports: [
     BrowserModule,
