@@ -20,8 +20,8 @@
         <td>{{ beautifulDate(event["dateFin"]) }}</td>
         <td>{{ event["source"] }}</td>
         <td>{{ event["type"] }}</td>
-        <td><a class="button fancy-button publishButton" (click)="addMessage()"><mat-icon>edit</mat-icon></a></td>
-        <td *ngIf="!event['relevant']"><a class="button fancy-button publishButton" (click)="editPublishing(event['_id'], true)"><mat-icon>email</mat-icon> Envoyer</a></td>
+        <td><a class="button fancy-button publishButton" (click)="addMessage(event['_id'])"><mat-icon>edit</mat-icon></a></td>
+        <td *ngIf="!event['relevant']"><a class="button fancy-button publishButton" (click)="editPublishing(event['_id'], true)"><mat-icon>email</mat-icon> Publier</a></td>
         <td *ngIf="event['relevant']"><a class="button fancy-button unpublishButton" (click)="editPublishing(event['_id'], false)"><mat-icon>cancel</mat-icon> Annuler</a></td>
     </tr>
 </table>

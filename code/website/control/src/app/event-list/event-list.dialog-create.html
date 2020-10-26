@@ -1,0 +1,32 @@
+<!-- <h2 mat-dialog-title>Ajouter un évènement</h2>
+<mat-dialog-content class="mat-typography">
+  
+  <p><b>Lieu</b> : <input [(ngModel)]="localisation"/></p>
+
+  <p><b>Source</b> : <input [(ngModel)]="source"/> | <b>Type</b> : <input [(ngModel)]="type" placeholder="manual"/></p>
+
+  <p><b>Impact</b> : <input [(ngModel)]="impact"/></p>
+
+  <p><b>Du</b> <input type="date" [(ngModel)]="dateDebut"/> <b>au</b> <input type="date" [(ngModel)]="dateFin"/></p>
+
+  <p><b>Informations supplémentaires</b>
+
+  <textarea class="large-input" [(ngModel)]="info" rows="10" cols="100" placeholder="Information uniquement accessible pour la gestion du site"></textarea>
+
+  <p><b>Message à afficher</b></p> 
+  
+  <textarea class="large-input" [(ngModel)]="message" rows="10" cols="100" placeholder="Un message à divulguer publiquement"></textarea>
+  
+  <br/>
+
+  <b>Image jointe :</b><input class="file-input" type="file">
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button class="mat-dialog-button" mat-button mat-dialog-close>Annuler</button>
+  <button (click)="submit()" class="mat-dialog-button" mat-button cdkFocusInitial>Enregistrer</button>
+</mat-dialog-actions>
+
+
+<!-- Copyright 2020 Google LLC. All Rights Reserved.
+    Use of this source code is governed by an MIT-style license that
+    can be found in the LICENSE file at http://angular.io/license --> -->
