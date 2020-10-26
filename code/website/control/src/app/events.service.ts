@@ -26,8 +26,10 @@ export class EventsService{
     * */
     getEvents() : Observable<Event[]> {
         let eventUrl : string = `${environment.baseUrl}control/select-event/`
+        let hourLessDay : Date = new Date()
+        hourLessDay.setHours(0,0,0,0)
         let body = {
-          dateFin : ["more", "2020-10-12T00:00:00.000Z"]
+          dateFin : ["more", hourLessDay.toISOString()]
         }
       return this.http.post<Event[]>(eventUrl, body)
     }
@@ -38,10 +40,10 @@ export class EventsService{
      * @param eventId : an event identifier 
      * @param published : must the event be published or not ? 
      */
-    publish(eventId : number, published : boolean ) : Observable<ControlResponse>{
+    publish(eventId : string, published : boolean ) : Observable<ControlResponse>{
       let eventUrl : string = `${environment.baseUrl}control/event/`
       let body = {
-        id : eventId,
+        _id : eventId,
         relevant : published
       }
       return this.http.put<ControlResponse>(eventUrl, body)

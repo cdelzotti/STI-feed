@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { EventsService } from './../events.service'
 import { Event } from './event'
 import { ControlResponse } from './controlResponse'
-import { response } from 'express';
+
 
 @Component({
   selector: 'event-list',
@@ -11,7 +11,7 @@ import { response } from 'express';
 })
 export class EventListComponent implements OnInit {
   
-  constructor (private eventService : EventsService ){}
+  constructor (private eventService : EventsService){}
 
   events : Event[]
   controlResponse : ControlResponse
@@ -29,11 +29,13 @@ export class EventListComponent implements OnInit {
    * @param id : events identifier 
    * @param relevance : Must it be pubished or not ?
    */
-  editPublishing(id : number, relevance : boolean) : void{
+  editPublishing(id : string, relevance : boolean) : void{
     this.eventService.publish(id, relevance).subscribe(
-      controlResponse => (this.controlResponse = controlResponse)
+      (controlResponse) => {
+        this.controlResponse = controlResponse;
+        this.ngOnInit();
+      }
     );
-    this.ngOnInit();
   }
 
   addMessage() : void {
