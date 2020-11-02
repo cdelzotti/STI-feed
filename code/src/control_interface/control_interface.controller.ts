@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, ParseIntPipe, Param, ParseBoolPipe, Put} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, ParseIntPipe, Param, ParseBoolPipe, Res, Put} from '@nestjs/common';
 import { ControlInterfaceService } from './control_interface.service'
 import { EventData } from '../data/data.entity'
 import { ControlResponse } from './control_interface.dto'
