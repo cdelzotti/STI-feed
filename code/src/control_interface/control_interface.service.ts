@@ -46,12 +46,13 @@ export class ControlInterfaceService {
             throw new BadRequestException("Couldn't find an event with that ID")
         }
         await this.eventRepository.save(event).catch( (e) => {
-            return {
+            throw new BadRequestException({
                 status : `${e}`,
                 error : true
-            };
+            });
         });
         return {
+            _id : event._id,
             status : "",
             error : false
         };
@@ -66,12 +67,13 @@ export class ControlInterfaceService {
      */
     async deleteEvent(event) : Promise<ControlResponse>{
         await this.eventRepository.delete(event).catch( (e) => {
-            return {
+            throw new BadRequestException({
                 status : `${e}`,
                 error : true
-            };
+            });
         });
         return {
+            _id : event._id,
             status : "",
             error : false
         };
@@ -86,20 +88,19 @@ export class ControlInterfaceService {
      * @returns a ControlResponse
      */
     async addEvent(event) : Promise<ControlResponse>{
-        // Parse dates
-
+        // set default value
         event["attachedFile"] = ""
         await this.eventRepository.insert(event).catch( (e) => {
-            return {
+            throw new BadRequestException({
                 status : `${e}`,
                 error : true
-            };
+            });
         });
         return {
             _id : event._id,
             status : "",
             error : false
-        };
+        }
     }
 
     /**
@@ -114,10 +115,10 @@ export class ControlInterfaceService {
         }, {
             attachedFile : filename
         }).catch((e) => {
-            return {
+            throw new BadRequestException({
                 status : `${e}`,
                 error : true
-            };
+            });
         });
         return {
             status : "",
@@ -126,7 +127,65 @@ export class ControlInterfaceService {
     }
 
 
-    async addLink(id : ObjectID, links) {
-        
+    async addLink(eventID : ObjectID, links) : Promise<ControlResponse> {
+        for (let index = 0; index < links.length; index++) {
+            await this.linksRepository.insert({
+                name : links[index].name,
+                link : links[index].link,
+                relatedEvent : eventID
+            }).catch((e => {
+                throw new BadRequestException(
+                {
+                    status : `${e}`,
+                    error : true
+                });
+            }));
+        }
+        return {
+            status : "",
+            error : false
+        };
+    }
+
+    /**
+     * @returns Every links related to `eventID`
+     */
+    async getLinks(eventID : ObjectID) : Promise<EventLinks[]> {
+        return this.linksRepository.find({
+                where : {
+                    relatedEvent : eventID
+                },
+                order : {
+                    name : "ASC"
+                }
+            });
+    }
+
+    async deleteLinks(id : ObjectID, isEventID : boolean) : Promise<ControlResponse>{
+        // if the provided id is the event's ID
+        let deletionConstraints;
+        if (isEventID) {
+            deletionConstraints = {
+                relatedEvent : id
+            }
+        // if the provided ID is the link's ID
+        } else {
+            deletionConstraints = {
+                _id : id
+            }
+        }
+        // Delete
+        // TODO important : Vérifier pourquoi il ne supprime pas
+        // toutes les lignes
+        await this.linksRepository.delete(deletionConstraints).catch( (e) => {
+            throw new BadRequestException({
+                status : `${e}`,
+                error : true
+            });
+        });
+        return {
+            status : '',
+            error : false
+        }
     }
 }

@@ -3,7 +3,6 @@ import { IsString, IsInt, IsBoolean, IsDate } from 'class-validator';
 import { EventData } from '../data/data.entity'
 
 @Entity("EventLinks")
-@Unique(["name"])
 export class EventLinks{
     @IsString()
     @ObjectIdColumn()
