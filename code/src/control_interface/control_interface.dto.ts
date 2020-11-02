@@ -3,4 +3,5 @@ import { ObjectID } from 'typeorm';
 export class ControlResponse{
     status : string; // Details about the process
     error : boolean; // Is there an error
+    _id? : string; // Id of a just-added object
 }

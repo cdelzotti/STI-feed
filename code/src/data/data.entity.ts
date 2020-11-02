@@ -42,4 +42,8 @@ export class EventData{
     @IsString()
     @Column({ nullable: true })
     info? : string;
+
+    @IsString()
+    @Column({ nullable: true })
+    attachedFile? : string;
 }

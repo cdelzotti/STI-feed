@@ -85,7 +85,32 @@ export class ControlInterfaceService {
     async addEvent(event) : Promise<ControlResponse>{
         // Parse dates
 
+        event["attachedFile"] = ""
         await this.eventRepository.insert(event).catch( (e) => {
+            return {
+                status : `${e}`,
+                error : true
+            };
+        });
+        return {
+            _id : event._id,
+            status : "",
+            error : false
+        };
+    }
+
+    /**
+     * Edits the database to set the attached file field to `filename`
+     * 
+     * @param id An object identifier
+     * @param filename Name of the attached file
+     */
+    async registerAttached(id : ObjectID, filename){
+        await this.eventRepository.update({
+            _id : id
+        }, {
+            attachedFile : filename
+        }).catch((e) => {
             return {
                 status : `${e}`,
                 error : true
