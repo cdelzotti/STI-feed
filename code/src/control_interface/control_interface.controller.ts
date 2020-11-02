@@ -1,10 +1,15 @@
-import { Body, Controller, Delete, Get, Post, ParseIntPipe, Param, ParseBoolPipe, Res, Put} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Res, Req, Put, UseInterceptors, UploadedFile, Param} from '@nestjs/common';
 import { ControlInterfaceService } from './control_interface.service'
 import { EventData } from '../data/data.entity'
 import { ControlResponse } from './control_interface.dto'
 import * as assert from 'assert'
 import { Response } from 'express'
-import { EventWithCompDatePipe, EventWithIDPipe, EventWithoutIDPipe, NormalEventPipe } from "./control_interface.pipe"
+import { EventWithCompDatePipe, EventWithIDPipe, EventWithoutIDPipe, NormalEventPipe, ObjectIDPipe } from "./control_interface.pipe"
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer'
+import { handleFileName } from '../utils/upload-file.utils'
+import { identity } from 'rxjs/internal/util/identity';
+import { ObjectID } from 'mongodb';
 
 @Controller("control/")
 export class ControlInterfaceController {
@@ -66,4 +71,18 @@ export class ControlInterfaceController {
     return this.controlInterfaceService.addEvent(event);
   }
 
+  /**
+   * Add and image
+   */
+  @Post("picture/:id")
+  @UseInterceptors(FileInterceptor('file', {
+    storage : diskStorage({
+      destination : './static/img',
+      filename : handleFileName
+    })
+  }))
+  async upload(@Param(new ObjectIDPipe()) id : ObjectID, @UploadedFile() file) {
+    return this.controlInterfaceService.registerAttached(id, file.filename)
+  }
+  
 }

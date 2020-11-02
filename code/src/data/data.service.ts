@@ -36,6 +36,7 @@ export class APRetreiver {
                 let currentEvent : EventData = new EventData();
                 currentEvent.localisation = worksheet.getCell(`C${row}`).value as string;
                 currentEvent.type = "AP";
+                currentEvent.attachedFile = "";
                 currentEvent.impact = worksheet.getCell(`E${row}`).value as string;
                 currentEvent.dateDebut = worksheet.getCell(`F${row}`).value as Date;
                 currentEvent.dateFin = worksheet.getCell(`G${row}`).value as Date;

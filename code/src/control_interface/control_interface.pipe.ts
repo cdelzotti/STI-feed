@@ -161,3 +161,19 @@ export class NormalEventPipe implements PipeTransform {
     return eventChecker.checkEvent(thingReceived, false, 1)
   }
 }
+
+@Injectable()
+/**
+ * Ensures that the given input is a valid Event representation
+ */
+export class ObjectIDPipe implements PipeTransform {
+
+  transform(thingReceived: any, metadata: ArgumentMetadata) : ObjectID {
+    try {
+      thingReceived = new ObjectID(thingReceived.id);
+    } catch (error) {
+      throw new BadRequestException(`Could not parse ${thingReceived.id} into a mongodb ObjectID`)
+    }
+    return thingReceived;
+  }
+}

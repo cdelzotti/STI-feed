@@ -6,9 +6,18 @@ import { OutputModule } from './output/output.module';
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Connection } from 'typeorm'
 import { EventData } from './data/data.entity'
+import { MulterModule } from '@nestjs/platform-express'
 
 @Module({
-  imports: [UserModule, ControlInterfaceModule, DataModule, OutputModule, TypeOrmModule.forRoot({
+  imports: [
+    UserModule, 
+    ControlInterfaceModule, 
+    DataModule,
+    MulterModule.register({
+      dest : './static/img'
+    }),
+    OutputModule, 
+    TypeOrmModule.forRoot({
     type : "mongodb",
     host : "localhost",
     database : "stifeed",
