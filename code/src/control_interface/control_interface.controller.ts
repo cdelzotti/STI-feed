@@ -10,6 +10,7 @@ import { diskStorage } from 'multer'
 import { handleFileName } from '../utils/upload-file.utils'
 import { identity } from 'rxjs/internal/util/identity';
 import { ObjectID } from 'mongodb';
+import { get } from 'http';
 
 @Controller("control/")
 export class ControlInterfaceController {
@@ -81,8 +82,27 @@ export class ControlInterfaceController {
       filename : handleFileName
     })
   }))
-  async upload(@Param(new ObjectIDPipe()) id : ObjectID, @UploadedFile() file) {
+  async uploadAttached(@Param(new ObjectIDPipe()) id : ObjectID, @UploadedFile() file) : Promise<ControlResponse> {
     return this.controlInterfaceService.registerAttached(id, file.filename)
   }
   
+  @Delete("picture/:id")
+  async removeAttached(@Param(new ObjectIDPipe()) id : ObjectID) : Promise<ControlResponse>{
+    return this.controlInterfaceService.registerAttached(id, "")
+  }
+
+  @Post("link/:id")
+  async addLink(@Param(new ObjectIDPipe()) eventID, @Body() links){
+    // Add link
+  }
+
+  @Get("link/:id")
+  async getLinks(@Param(new ObjectIDPipe()) eventID){
+    // Get link
+  }
+
+  @Delete("link/:id")
+  async deleteLink(@Param(new ObjectIDPipe()) linkID){
+    // Delete link
+  }
 }

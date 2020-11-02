@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, Post} from '@nestjs/common';
 import { Db, Repository, Equal, MoreThan} from 'typeorm';
 import { EventData } from '../data/data.entity'
+import { EventLinks } from './control_interface.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ControlResponse } from './control_interface.dto'
 import { ObjectID } from 'mongodb'
@@ -12,7 +13,9 @@ export class ControlInterfaceService {
     constructor(
         // Create variable needed to access database
         @InjectRepository(EventData)
-        private eventRepository : Repository<EventData>
+        private eventRepository : Repository<EventData>,
+        @InjectRepository(EventLinks)
+        private linksRepository : Repository<EventLinks>
     ){}
 
     /**
@@ -120,5 +123,10 @@ export class ControlInterfaceService {
             status : "",
             error : false
         };
+    }
+
+
+    async addLink(id : ObjectID, links) {
+        
     }
 }
