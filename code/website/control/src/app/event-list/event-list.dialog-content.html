@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>Éditer un évènement</h2>
+<mat-dialog-content class="mat-typography">
+  <h3>{{ eventToEdit.localisation }}</h3>
+
+  <p><b>Impact</b> : {{ eventToEdit.impact }}</p>
+
+  <p><b>Du </b> {{ eventToEdit.dateDebut }} <b> au </b> {{ eventToEdit.dateFin }}</p>
+
+  <p><b>Informations supplémentaires</b> : {{ eventToEdit.info }}</p>
+
+  <p><b>Source</b> : {{ eventToEdit.source }} | <b>Type</b> : {{ eventToEdit.type }}</p>
+
+  <p><b>Message à afficher</b></p> 
+  
+  <textarea class="large-input" [(ngModel)]="eventToEdit.message" rows="10" cols="100"></textarea>
+  
+  <br/>
+
+  <b>Image jointe :</b><input class="file-input" type="file">
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button class="mat-dialog-button" mat-button mat-dialog-close>Annuler</button>
+  <button (click)="submit()" class="mat-dialog-button" mat-button [mat-dialog-close]="true" cdkFocusInitial>Sauvegarder</button>
+</mat-dialog-actions>

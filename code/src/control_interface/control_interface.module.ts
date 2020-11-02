@@ -15,7 +15,4 @@ import { join } from 'path'
   providers: [ControlInterfaceService],
 })
 export class ControlInterfaceModule {
-  configure(consumer : MiddlewareConsumer){
-    consumer.apply(EventExtractorMiddleware).forRoutes('/control/select-event/');
-  }
 }

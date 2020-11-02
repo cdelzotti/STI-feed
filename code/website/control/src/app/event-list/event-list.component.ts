@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Optional, Inject } from '@angular/core';
 import { EventsService } from './../events.service'
 import { Event } from './event'
 import { ControlResponse } from './controlResponse'
-
+import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { config } from 'process';
+import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'event-list',
@@ -11,10 +13,21 @@ import { ControlResponse } from './controlResponse'
 })
 export class EventListComponent implements OnInit {
   
-  constructor (private eventService : EventsService){}
+  constructor (private eventService : EventsService, public dialog: MatDialog){}
 
   events : Event[]
   controlResponse : ControlResponse
+
+  // Lambda function to retreive an event from its id
+  eventRetreiver = (eventID : string) : Event => {
+    let returnEvent : Event;
+    this.events.forEach((event : Event, index : number, array : Event[])=>{
+      if (event._id == eventID) {
+        returnEvent = event;
+      }
+    });
+    return returnEvent;
+  }
 
   /**
    *  Store into `events` every current/incoming events 
@@ -30,7 +43,13 @@ export class EventListComponent implements OnInit {
    * @param relevance : Must it be pubished or not ?
    */
   editPublishing(id : string, relevance : boolean) : void{
-    this.eventService.publish(id, relevance).subscribe(
+    // Retrieve event
+    let selectedEvent : Event = this.eventRetreiver(id);
+    // edit event
+    this.eventService.editEvent({
+      _id : id,
+      relevant : !selectedEvent.relevant
+    }).subscribe(
       (controlResponse) => {
         this.controlResponse = controlResponse;
         this.ngOnInit();
@@ -38,13 +57,44 @@ export class EventListComponent implements OnInit {
     );
   }
 
-  addMessage() : void {
-    window.alert("Not implemented yet")
+
+  /**
+   * Show a dialog box allowing event edition
+   * 
+   * @param id Event identifier
+   */
+  addMessage(id : string) : void {
+    // retrieve event details
+    let event : Event = this.eventRetreiver(id);
+
+    // Open dialog box
+    const dialogRef = this.dialog.open(EventListEditDialog, {
+      data : {
+        eventEdit : event,
+        fromPage : this
+      }
+    });
+
+    // Closing callback
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
+    
   }
 
 
   addEvent() : void {
-    window.alert("Not implemented yet")
+        // Open dialog box
+        const dialogRef = this.dialog.open(EventListCreateDialog, {
+          data : {
+            fromPage : this
+          }
+        });
+    
+        // Closing callback
+        dialogRef.afterClosed().subscribe(result => {
+          console.log(`Dialog result: ${result}`);
+        });
   }
 
   /** 
@@ -80,5 +130,99 @@ export class EventListComponent implements OnInit {
     let dateComponents : string[] = date.split("-")
     return `${+dateComponents[2]} ${numberToMonth[+dateComponents[1] - 1]} ${dateComponents[0]}`
   }
+}
 
+
+// The dialogBox edition content
+@Component({
+  selector: 'event-list-edit-dialog',
+  templateUrl: 'event-list.dialog-content.html',
+})
+export class EventListEditDialog {
+
+  eventToEdit : Event;
+  fromPage : EventListComponent;
+
+  constructor(
+    public dialogRef: MatDialogRef<EventListEditDialog>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data,
+    private eventService : EventsService
+  ) {
+    this.eventToEdit = data.eventEdit;
+    this.fromPage = data.fromPage;
+  }
+
+  submit() {
+    this.eventService.editEvent({
+      _id : this.eventToEdit._id,
+      message : this.eventToEdit.message,
+      relevant : true
+    }).subscribe((controlResponse) => {
+      // Refresh the hosting component
+      this.fromPage.ngOnInit()
+    })
+  }
+}
+
+
+// The dialogBox creation content
+@Component({
+  selector: 'event-list-create-dialog',
+  templateUrl: 'event-list.dialog-create.html',
+})
+export class EventListCreateDialog{
+  
+  // Component that generated the dialogBox
+  fromPage : EventListComponent;
+
+  // Event variables
+  localisation : string;
+  impact : string;
+  info : string;
+  dateDebut : string;
+  dateFin : string;
+  source : string;
+  relevant : boolean;
+  message : string;
+  type : string;
+
+
+  constructor(
+    public dialogRef: MatDialogRef<EventListCreateDialog>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data,
+    private eventService : EventsService
+  ) {
+    this.fromPage = data.fromPage;
+  }
+
+  submit(){
+    // Check that minimal fields are filled
+    if (this.localisation == undefined || this.impact == undefined || this.dateDebut == undefined || this.dateFin == undefined) {
+      // print error message
+    }
+    // Assign default values
+    if (this.relevant == undefined) {
+      this.relevant = false;
+    }
+    if (this.type == undefined) {
+      this.type = "manual"
+    }
+    // Add new event
+    this.eventService.createEvent({
+      localisation : this.localisation,
+      relevant : this.relevant,
+      dateDebut : `${this.dateDebut}T00:00:00.000Z`,
+      dateFin : `${this.dateFin}T00:00:00.000Z`,
+      impact : this.impact,
+      info : this.info,
+      source : this.source,
+      message : this.message,
+      type : this.type
+    }).subscribe(
+      (controlResponse) => {
+        // reload event list
+        this.fromPage.ngOnInit();
+      }
+    );
+  }
 }

@@ -1,4 +1,4 @@
-import { Injectable, Post} from '@nestjs/common';
+import { BadRequestException, Injectable, Post} from '@nestjs/common';
 import { Db, Repository, Equal, MoreThan} from 'typeorm';
 import { EventData } from '../data/data.entity'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -37,12 +37,12 @@ export class ControlInterfaceService {
      * @requires eventID < max_event_index
      * @returns request reponse
      */
-    async editEvent(eventID: string, event) : Promise<ControlResponse>{
+    async editEvent(eventID: ObjectID, event) : Promise<ControlResponse>{
         let eventFromDB : EventData = await this.eventRepository.findOne(eventID);
-        for (const key in event) {
-            eventFromDB[key] = event[key];
+        if (eventFromDB == undefined) {
+            throw new BadRequestException("Couldn't find an event with that ID")
         }
-        await this.eventRepository.save(eventFromDB).catch( (e) => {
+        await this.eventRepository.save(event).catch( (e) => {
             return {
                 status : `${e}`,
                 error : true
@@ -83,6 +83,8 @@ export class ControlInterfaceService {
      * @returns a ControlResponse
      */
     async addEvent(event) : Promise<ControlResponse>{
+        // Parse dates
+
         await this.eventRepository.insert(event).catch( (e) => {
             return {
                 status : `${e}`,

@@ -35,17 +35,24 @@ export class EventsService{
     }
 
     /**
-     * Publish/Unpublish an event
+     * Edit an event
      * 
-     * @param eventId : an event identifier 
-     * @param published : must the event be published or not ? 
+     * @param body : What the body should look like after update. DO NOT forgot to give the "_id" field ! 
      */
-    publish(eventId : string, published : boolean ) : Observable<ControlResponse>{
+    editEvent(body : Event ) : Observable<ControlResponse>{
+      // TODO : assert on body
       let eventUrl : string = `${environment.baseUrl}control/event/`
-      let body = {
-        _id : eventId,
-        relevant : published
-      }
       return this.http.put<ControlResponse>(eventUrl, body)
+    }
+
+    /**
+     * Add an event to the DB
+     * 
+     * @param body The body off the event you want to add
+     */
+    createEvent(body : Event) : Observable<ControlResponse>{
+      // TODO : assert no ID
+      let eventUrl : string = `${environment.baseUrl}control/event/`
+      return this.http.post<ControlResponse>(eventUrl, body)
     }
 }
