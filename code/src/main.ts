@@ -13,6 +13,7 @@ async function bootstrap() {
   // Serve websites
   app.use('/control-site' ,express.static('website/control/dist/control'));
   app.use('/public-site' ,express.static('website/public/dist/control'));
+  app.use('/pictures' ,express.static('static/img'));
 
   app.enableCors();
   await app.listen(3000);

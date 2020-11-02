@@ -2,3 +2,4 @@ node_modules
 db.sqlite
 dist
 mongoData
+img
