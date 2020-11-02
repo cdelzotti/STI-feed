@@ -44,4 +44,15 @@ export class EventsService{
       let eventUrl : string = `${environment.baseUrl}control/event/`
       return this.http.put<ControlResponse>(eventUrl, body)
     }
+
+    /**
+     * Add an event to the DB
+     * 
+     * @param body The body off the event you want to add
+     */
+    createEvent(body : Event) : Observable<ControlResponse>{
+      // TODO : assert no ID
+      let eventUrl : string = `${environment.baseUrl}control/event/`
+      return this.http.post<ControlResponse>(eventUrl, body)
+    }
 }

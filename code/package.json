@@ -32,6 +32,7 @@
     "core-js": "^3.6.5",
     "exceljs": "^4.1.1",
     "hbs": "^4.1.1",
+    "is-iso-date": "0.0.1",
     "mongodb": "^3.6.2",
     "mysql": "^2.18.1",
     "reflect-metadata": "^0.1.13",

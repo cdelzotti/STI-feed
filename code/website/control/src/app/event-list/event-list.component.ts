@@ -4,6 +4,7 @@ import { Event } from './event'
 import { ControlResponse } from './controlResponse'
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { config } from 'process';
+import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'event-list',
@@ -178,8 +179,8 @@ export class EventListCreateDialog{
   localisation : string;
   impact : string;
   info : string;
-  dateDebut : Date;
-  dateFin : Date;
+  dateDebut : string;
+  dateFin : string;
   source : string;
   relevant : boolean;
   message : string;
@@ -195,6 +196,33 @@ export class EventListCreateDialog{
   }
 
   submit(){
-    console.warn("PAF")
+    // Check that minimal fields are filled
+    if (this.localisation == undefined || this.impact == undefined || this.dateDebut == undefined || this.dateFin == undefined) {
+      // print error message
+    }
+    // Assign default values
+    if (this.relevant == undefined) {
+      this.relevant = false;
+    }
+    if (this.type == undefined) {
+      this.type = "manual"
+    }
+    // Add new event
+    this.eventService.createEvent({
+      localisation : this.localisation,
+      relevant : this.relevant,
+      dateDebut : `${this.dateDebut}T00:00:00.000Z`,
+      dateFin : `${this.dateFin}T00:00:00.000Z`,
+      impact : this.impact,
+      info : this.info,
+      source : this.source,
+      message : this.message,
+      type : this.type
+    }).subscribe(
+      (controlResponse) => {
+        // reload event list
+        this.fromPage.ngOnInit();
+      }
+    );
   }
 }

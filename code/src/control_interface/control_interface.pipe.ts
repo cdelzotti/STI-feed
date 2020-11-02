@@ -1,35 +1,163 @@
 import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
-import { validate } from 'class-validator';
-import { plainToClass } from 'class-transformer';
 import { ObjectID } from 'mongodb'
 
+class EventChecker{
+  allowedKey : string[] = [
+    "_id",
+    "localisation",
+    "impact",
+    "dateDebut",
+    "dateFin",
+    "source",
+    "relevant",
+    "message",
+    "type",
+    "info"
+  ];
 
-@Injectable()
-export class SchemaValidationPipe implements PipeTransform<any> {
-  async transform(value: any, { metatype }: ArgumentMetadata) {
-    if (!metatype || !this.toValidate(metatype)) {
-      return value;
+  /**
+   * Checks if an given thing is a valid event Representation
+   * 
+   * @param thingReceived 
+   * @param dateComparative Tells if the date must be in comparative form
+   * @param idImportance Tells how important `_id` is, {0 : Cannot be provided, 1 : can be provided, 2 : must be provided}
+   */
+  checkEvent(thingReceived, dateComparative : boolean, idImportance : Number){
+    // Checks id
+    if (thingReceived["_id"] != undefined && idImportance == 0) {
+      throw new BadRequestException("_id cannot be provided for this request")
     }
-    const object = plainToClass(metatype, value);
-    const errors = await validate(object);
-    if (errors.length > 0) {
-      throw new BadRequestException('Validation failed');
+    if (thingReceived["_id"] == undefined && idImportance == 2) {
+      throw new BadRequestException("_id must be provided for this request")
     }
-    return value;
+    // Checks dates
+    if (dateComparative) {
+      this.tryToParseComparativeDate(thingReceived);
+    } else {
+      if (thingReceived.dateDebut != undefined) {
+        thingReceived.dateDebut = this.tryToParseDate(thingReceived["dateDebut"])
+      } 
+      if (thingReceived.dateFin != undefined) {
+        thingReceived.dateFin = this.tryToParseDate(thingReceived["dateFin"])
+      } 
+    }
+
+    for (const key in thingReceived) {
+      if (this.allowedKey.includes(key)) {
+        switch (key) {
+          case "_id": {
+            try {
+              thingReceived._id = new ObjectID(thingReceived._id) 
+            } catch (error) {
+              throw new BadRequestException("Could not parse ID.")
+            }
+            break;
+          }
+          case "relevant" : {
+            if (thingReceived.relevant != true && thingReceived.relevant != false) {
+              throw new BadRequestException("Relevant must be a boolean value.")
+            }
+            break;
+          }
+          default:
+            break;
+        }
+      } else {
+        throw new BadRequestException(`${key} is not a valid key`)
+      }
+    }
+    return thingReceived;
   }
 
-  private toValidate(metatype: Function): boolean {
-    const types: Function[] = [String, Boolean, Number, Array, Object];
-    return !types.includes(metatype);
+  /**
+   * Try to parse `thingReceived[key]` into a date object. Returns a BadRequestException
+   * if it can't.
+   * 
+   * @param date a string representing an ISO-formated date.
+   * @returns a Date objet, or throws an error.
+   */
+  tryToParseDate(date : string) : Date {
+    try {
+      return new Date(date)
+    } catch (error) {
+      throw new BadRequestException(`Could not parse ${date}, is it a well formed ISO string date?`)
+    }
+  }
+
+  /**
+   * Try to parse dates from thingReceived in
+   * a comparative manner
+   * 
+   * @param thingReceived
+   * @returns edits thingReceived dateDebut and dateFin keys, or throw BadRequest error
+   * if parsing failed 
+   */
+  tryToParseComparativeDate(thingReceived){
+    let keys : string[] = ["dateDebut", "dateFin"]
+    try {
+      for (const key in keys) {
+        let dateKey : string = keys[key]
+        if (thingReceived[dateKey] != undefined){
+          let date : Date = new Date(thingReceived[dateKey][1])
+          // Checks if ISO string is valid
+          if (Number.isNaN(date.getTime())) {
+            throw new BadRequestException(`${dateKey} isn't a valid ISO string`)
+          }
+          if (thingReceived[dateKey][0] == "more"){
+            thingReceived[dateKey] = {$gte: date};
+          } else if (thingReceived[dateKey][0] == "less") {
+            thingReceived[dateKey] = {$lte: date};
+          } else {
+            throw new BadRequestException(`${keys[key]} doesn't start neither with more nor less. Is it really a list ?`)
+          }
+        } 
+      }
+    } catch (error) {
+     throw new BadRequestException("Something isn't right in your date formats") 
+    }
   }
 }
 
+
 @Injectable()
-export class EventDataGet implements PipeTransform {
-  transform(value: any, metadata: ArgumentMetadata) {
-    if (value._id != undefined) { 
-      value._id = new ObjectID(value._id)
-    }
-    return value;
+/**
+ * Ensures that the given input is a valid Event representation
+ */
+export class EventWithoutIDPipe implements PipeTransform {
+
+  transform(thingReceived: any, metadata: ArgumentMetadata) {
+    let eventChecker : EventChecker = new EventChecker()
+    return eventChecker.checkEvent(thingReceived, false, 0)
+  }
+}
+@Injectable()
+/**
+ * Ensures that the given input is a valid Event representation
+ */
+export class EventWithIDPipe implements PipeTransform {
+
+  transform(thingReceived: any, metadata: ArgumentMetadata) {
+    let eventChecker : EventChecker = new EventChecker()
+    return eventChecker.checkEvent(thingReceived, false, 2)
+  }
+}
+/**
+ * Ensures that the given input is a valid Event representation
+ */
+export class EventWithCompDatePipe implements PipeTransform {
+
+  transform(thingReceived: any, metadata: ArgumentMetadata) {
+    let eventChecker : EventChecker = new EventChecker()
+    return eventChecker.checkEvent(thingReceived, true, 1)
+  }
+}
+/**
+ * Ensures that the given input is a valid Event representation
+ */
+export class NormalEventPipe implements PipeTransform {
+
+  transform(thingReceived: any, metadata: ArgumentMetadata) {
+    let eventChecker : EventChecker = new EventChecker()
+    return eventChecker.checkEvent(thingReceived, false, 1)
   }
 }

@@ -1,5 +1,5 @@
 export interface Event {
-    _id : string,
+    _id? : string,
     localisation? : string,
     impact? : string,
     dateDebut? : string,

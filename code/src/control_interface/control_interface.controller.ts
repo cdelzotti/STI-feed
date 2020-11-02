@@ -4,7 +4,7 @@ import { EventData } from '../data/data.entity'
 import { ControlResponse } from './control_interface.dto'
 import * as assert from 'assert'
 import { Response } from 'express'
-import { EventDataGet } from "./control_interface.pipe"
+import { EventWithCompDatePipe, EventWithIDPipe, EventWithoutIDPipe, NormalEventPipe } from "./control_interface.pipe"
 
 @Controller("control/")
 export class ControlInterfaceController {
@@ -26,7 +26,7 @@ export class ControlInterfaceController {
    * @returns Every event matching body
    */
   @Post("select-event/")
-  async getEvents(@Body(new EventDataGet()) body) : Promise<EventData[]> {
+  async getEvents(@Body(new EventWithCompDatePipe()) body) : Promise<EventData[]> {
     // TODO : assert body
     return this.controlInterfaceService.getEvents(body);
   }
@@ -39,7 +39,7 @@ export class ControlInterfaceController {
    * @returns A ControlResponse
    */
   @Put("event/")
-  async editEvent(@Body(new EventDataGet()) event) : Promise<ControlResponse>{
+  async editEvent(@Body(new EventWithIDPipe()) event) : Promise<ControlResponse>{
     return this.controlInterfaceService.editEvent(event["_id"], event);
   }
 
@@ -50,7 +50,7 @@ export class ControlInterfaceController {
    * @returns ControlResponse
    */
   @Delete("event/")
-  async deleteEvent(@Body(new EventDataGet()) event) : Promise<ControlResponse>{
+  async deleteEvent(@Body(new NormalEventPipe()) event) : Promise<ControlResponse>{
     return this.controlInterfaceService.deleteEvent(event);
   }
 
@@ -62,7 +62,7 @@ export class ControlInterfaceController {
    * @returns ControlResponse
    */
   @Post("event/")
-  async addEvent(@Body(new EventDataGet()) event) : Promise<ControlResponse>{
+  async addEvent(@Body(new EventWithoutIDPipe()) event) : Promise<ControlResponse>{
     return this.controlInterfaceService.addEvent(event);
   }
 
