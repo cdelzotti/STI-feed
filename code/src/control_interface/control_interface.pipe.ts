@@ -177,3 +177,32 @@ export class ObjectIDPipe implements PipeTransform {
     return thingReceived;
   }
 }
+
+@Injectable()
+/**
+ * Ensures that the given input is a valid link representation
+ * 
+ * A valid link representation is a list of links containing dictionaries
+ * with only `name` and `link` as keys.
+ */
+export class LinkListPipe implements PipeTransform {
+
+  transform(thingReceived: any, metadata: ArgumentMetadata) : ObjectID {
+    let allowedKeys : string[] = ["name", "link"]
+    let hasKeys : boolean = false;
+    
+      for (const link in thingReceived) {
+        for (const key in thingReceived[link]) {
+          if (!allowedKeys.includes(key)){
+            throw new BadRequestException(`${key} key isn't allowed`)
+          }
+          hasKeys = true
+        }
+      }
+    
+    if (!hasKeys) {
+      throw new BadRequestException("Couldn't find any keys, is it really a dict ?")
+    }
+    return thingReceived;
+  }
+}

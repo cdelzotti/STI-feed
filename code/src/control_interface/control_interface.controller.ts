@@ -4,7 +4,7 @@ import { EventData } from '../data/data.entity'
 import { ControlResponse } from './control_interface.dto'
 import * as assert from 'assert'
 import { Response } from 'express'
-import { EventWithCompDatePipe, EventWithIDPipe, EventWithoutIDPipe, NormalEventPipe, ObjectIDPipe} from "./control_interface.pipe"
+import { EventWithCompDatePipe, EventWithIDPipe, EventWithoutIDPipe, NormalEventPipe, ObjectIDPipe, LinkListPipe} from "./control_interface.pipe"
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer'
 import { handleFileName } from '../utils/upload-file.utils'
@@ -92,7 +92,7 @@ export class ControlInterfaceController {
   }
 
   @Post("link/:id")
-  async addLink(@Param(new ObjectIDPipe()) eventID, @Body() links) : Promise<ControlResponse>{
+  async addLink(@Param(new ObjectIDPipe()) eventID, @Body(new LinkListPipe()) links) : Promise<ControlResponse>{
     return this.controlInterfaceService.addLink(eventID, links);
   }
 
@@ -102,7 +102,7 @@ export class ControlInterfaceController {
   }
 
   @Delete("link/:id")
-  async deleteLink(@Param(new ObjectIDPipe()) id, @Body('eventID', new ParseBoolPipe()) isEventID){
-    return this.controlInterfaceService.deleteLinks(id, isEventID)
+  async deleteLink(@Param(new ObjectIDPipe()) id){
+    return this.controlInterfaceService.deleteLinks(id)
   }
 }

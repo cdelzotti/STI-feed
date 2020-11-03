@@ -127,6 +127,12 @@ export class ControlInterfaceService {
     }
 
 
+    /**
+     * Add links to the DB
+     * 
+     * @param eventID The ID the new link must be related to
+     * @param links A list of links (dict with name & link keys)
+     */
     async addLink(eventID : ObjectID, links) : Promise<ControlResponse> {
         for (let index = 0; index < links.length; index++) {
             await this.linksRepository.insert({
@@ -148,6 +154,9 @@ export class ControlInterfaceService {
     }
 
     /**
+     * Get every links related to a given event
+     * 
+     * @param eventID The ID of an event
      * @returns Every links related to `eventID`
      */
     async getLinks(eventID : ObjectID) : Promise<EventLinks[]> {
@@ -161,23 +170,15 @@ export class ControlInterfaceService {
             });
     }
 
-    async deleteLinks(id : ObjectID, isEventID : boolean) : Promise<ControlResponse>{
-        // if the provided id is the event's ID
-        let deletionConstraints;
-        if (isEventID) {
-            deletionConstraints = {
-                relatedEvent : id
-            }
-        // if the provided ID is the link's ID
-        } else {
-            deletionConstraints = {
-                _id : id
-            }
-        }
-        // Delete
-        // TODO important : Vérifier pourquoi il ne supprime pas
-        // toutes les lignes
-        await this.linksRepository.delete(deletionConstraints).catch( (e) => {
+    /**
+     * Delete a link
+     * 
+     * @param id the ID of the link you want to delete
+     */
+    async deleteLinks(id : ObjectID) : Promise<ControlResponse>{
+        await this.linksRepository.delete({
+            _id : id
+        }).catch( (e) => {
             throw new BadRequestException({
                 status : `${e}`,
                 error : true
