@@ -76,9 +76,7 @@ export class EventListComponent implements OnInit {
     });
 
     // Closing callback
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-    });
+    dialogRef.afterClosed().subscribe();
     
   }
 
@@ -87,10 +85,13 @@ export class EventListComponent implements OnInit {
         // Open dialog box
         const dialogRef = this.dialog.open(EventListCreateDialog, {
           data : {
-            fromPage : this
+            fromPage : this,
+            closingCallback : () => {
+              dialogRef.close()
+            }
           }
         });
-    
+
         // Closing callback
         dialogRef.afterClosed().subscribe(result => {
           console.log(`Dialog result: ${result}`);
@@ -174,6 +175,8 @@ export class EventListCreateDialog{
   
   // Component that generated the dialogBox
   fromPage : EventListComponent;
+  // A callback to close the dialog
+  closingCallback; 
 
   // Event variables
   localisation : string;
@@ -190,39 +193,40 @@ export class EventListCreateDialog{
   constructor(
     public dialogRef: MatDialogRef<EventListCreateDialog>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data,
-    private eventService : EventsService
+    private eventService : EventsService,
   ) {
     this.fromPage = data.fromPage;
+    this.closingCallback = data.closingCallback;
   }
 
   submit(){
     // Check that minimal fields are filled
-    if (this.localisation == undefined || this.impact == undefined || this.dateDebut == undefined || this.dateFin == undefined) {
-      // print error message
-    }
-    // Assign default values
-    if (this.relevant == undefined) {
-      this.relevant = false;
-    }
-    if (this.type == undefined) {
-      this.type = "manual"
-    }
-    // Add new event
-    this.eventService.createEvent({
-      localisation : this.localisation,
-      relevant : this.relevant,
-      dateDebut : `${this.dateDebut}T00:00:00.000Z`,
-      dateFin : `${this.dateFin}T00:00:00.000Z`,
-      impact : this.impact,
-      info : this.info,
-      source : this.source,
-      message : this.message,
-      type : this.type
-    }).subscribe(
-      (controlResponse) => {
-        // reload event list
-        this.fromPage.ngOnInit();
+    if (!(this.localisation == undefined || this.impact == undefined || this.dateDebut == undefined || this.dateFin == undefined)) {
+      // Assign default values
+      if (this.relevant == undefined) {
+        this.relevant = false;
       }
-    );
+      if (this.type == undefined) {
+        this.type = "manual"
+      }
+      // Add new event
+      this.eventService.createEvent({
+        localisation : this.localisation,
+        relevant : this.relevant,
+        dateDebut : `${this.dateDebut}T00:00:00.000Z`,
+        dateFin : `${this.dateFin}T00:00:00.000Z`,
+        impact : this.impact,
+        info : this.info,
+        source : this.source,
+        message : this.message,
+        type : this.type
+      }).subscribe(
+        (controlResponse) => {
+          // reload event list
+          this.closingCallback();
+          this.fromPage.ngOnInit();
+        }
+      ); 
+    }
   }
 }
