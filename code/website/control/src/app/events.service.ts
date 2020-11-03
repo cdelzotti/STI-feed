@@ -55,4 +55,12 @@ export class EventsService{
       let eventUrl : string = `${environment.baseUrl}control/event/`
       return this.http.post<ControlResponse>(eventUrl, body)
     }
+
+    postImage(id : string, image){
+      // TODO assert image
+      let url : string = `${environment.baseUrl}control/picture/${id}`
+      let formData = new FormData();
+      formData.append("file", image, image.name)
+      return this.http.post<ControlResponse>(url, formData);
+    }
 }

@@ -188,6 +188,7 @@ export class EventListCreateDialog{
   relevant : boolean;
   message : string;
   type : string;
+  image;
 
 
   constructor(
@@ -197,6 +198,10 @@ export class EventListCreateDialog{
   ) {
     this.fromPage = data.fromPage;
     this.closingCallback = data.closingCallback;
+  }
+
+  handleImage(){
+    this.image = (<HTMLInputElement>document.getElementById("createEventFileInput")).files[0]; 
   }
 
   submit(){
@@ -222,6 +227,12 @@ export class EventListCreateDialog{
         type : this.type
       }).subscribe(
         (controlResponse) => {
+          // Upload image
+          if (this.image != undefined){
+            this.eventService.postImage(controlResponse._id, this.image).subscribe((imgResponse) => {
+              console.log(imgResponse);
+            })
+          }
           // reload event list
           this.closingCallback();
           this.fromPage.ngOnInit();
