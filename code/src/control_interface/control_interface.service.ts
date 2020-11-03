@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, Post} from '@nestjs/common';
 import { Db, Repository, Equal, MoreThan} from 'typeorm';
 import { EventData } from '../data/data.entity'
+import { EventLinks } from './control_interface.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ControlResponse } from './control_interface.dto'
 import { ObjectID } from 'mongodb'
@@ -12,7 +13,9 @@ export class ControlInterfaceService {
     constructor(
         // Create variable needed to access database
         @InjectRepository(EventData)
-        private eventRepository : Repository<EventData>
+        private eventRepository : Repository<EventData>,
+        @InjectRepository(EventLinks)
+        private linksRepository : Repository<EventLinks>
     ){}
 
     /**
@@ -43,12 +46,13 @@ export class ControlInterfaceService {
             throw new BadRequestException("Couldn't find an event with that ID")
         }
         await this.eventRepository.save(event).catch( (e) => {
-            return {
+            throw new BadRequestException({
                 status : `${e}`,
                 error : true
-            };
+            });
         });
         return {
+            _id : event._id,
             status : "",
             error : false
         };
@@ -63,12 +67,13 @@ export class ControlInterfaceService {
      */
     async deleteEvent(event) : Promise<ControlResponse>{
         await this.eventRepository.delete(event).catch( (e) => {
-            return {
+            throw new BadRequestException({
                 status : `${e}`,
                 error : true
-            };
+            });
         });
         return {
+            _id : event._id,
             status : "",
             error : false
         };
@@ -83,20 +88,19 @@ export class ControlInterfaceService {
      * @returns a ControlResponse
      */
     async addEvent(event) : Promise<ControlResponse>{
-        // Parse dates
-
+        // set default value
         event["attachedFile"] = ""
         await this.eventRepository.insert(event).catch( (e) => {
-            return {
+            throw new BadRequestException({
                 status : `${e}`,
                 error : true
-            };
+            });
         });
         return {
             _id : event._id,
             status : "",
             error : false
-        };
+        }
     }
 
     /**
@@ -111,14 +115,78 @@ export class ControlInterfaceService {
         }, {
             attachedFile : filename
         }).catch((e) => {
-            return {
+            throw new BadRequestException({
                 status : `${e}`,
                 error : true
-            };
+            });
         });
         return {
             status : "",
             error : false
         };
+    }
+
+
+    /**
+     * Add links to the DB
+     * 
+     * @param eventID The ID the new link must be related to
+     * @param links A list of links (dict with name & link keys)
+     */
+    async addLink(eventID : ObjectID, links) : Promise<ControlResponse> {
+        for (let index = 0; index < links.length; index++) {
+            await this.linksRepository.insert({
+                name : links[index].name,
+                link : links[index].link,
+                relatedEvent : eventID
+            }).catch((e => {
+                throw new BadRequestException(
+                {
+                    status : `${e}`,
+                    error : true
+                });
+            }));
+        }
+        return {
+            status : "",
+            error : false
+        };
+    }
+
+    /**
+     * Get every links related to a given event
+     * 
+     * @param eventID The ID of an event
+     * @returns Every links related to `eventID`
+     */
+    async getLinks(eventID : ObjectID) : Promise<EventLinks[]> {
+        return this.linksRepository.find({
+                where : {
+                    relatedEvent : eventID
+                },
+                order : {
+                    name : "ASC"
+                }
+            });
+    }
+
+    /**
+     * Delete a link
+     * 
+     * @param id the ID of the link you want to delete
+     */
+    async deleteLinks(id : ObjectID) : Promise<ControlResponse>{
+        await this.linksRepository.delete({
+            _id : id
+        }).catch( (e) => {
+            throw new BadRequestException({
+                status : `${e}`,
+                error : true
+            });
+        });
+        return {
+            status : '',
+            error : false
+        }
     }
 }

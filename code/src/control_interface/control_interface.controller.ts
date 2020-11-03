@@ -1,15 +1,16 @@
-import { Body, Controller, Delete, Get, Post, Res, Req, Put, UseInterceptors, UploadedFile, Param} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Res, Req, Put, UseInterceptors, UploadedFile, Param, ParseBoolPipe} from '@nestjs/common';
 import { ControlInterfaceService } from './control_interface.service'
 import { EventData } from '../data/data.entity'
 import { ControlResponse } from './control_interface.dto'
 import * as assert from 'assert'
 import { Response } from 'express'
-import { EventWithCompDatePipe, EventWithIDPipe, EventWithoutIDPipe, NormalEventPipe, ObjectIDPipe } from "./control_interface.pipe"
+import { EventWithCompDatePipe, EventWithIDPipe, EventWithoutIDPipe, NormalEventPipe, ObjectIDPipe, LinkListPipe} from "./control_interface.pipe"
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer'
 import { handleFileName } from '../utils/upload-file.utils'
 import { identity } from 'rxjs/internal/util/identity';
 import { ObjectID } from 'mongodb';
+import { get } from 'http';
 
 @Controller("control/")
 export class ControlInterfaceController {
@@ -81,8 +82,27 @@ export class ControlInterfaceController {
       filename : handleFileName
     })
   }))
-  async upload(@Param(new ObjectIDPipe()) id : ObjectID, @UploadedFile() file) {
+  async uploadAttached(@Param(new ObjectIDPipe()) id : ObjectID, @UploadedFile() file) : Promise<ControlResponse> {
     return this.controlInterfaceService.registerAttached(id, file.filename)
   }
   
+  @Delete("picture/:id")
+  async removeAttached(@Param(new ObjectIDPipe()) id : ObjectID) : Promise<ControlResponse>{
+    return this.controlInterfaceService.registerAttached(id, "")
+  }
+
+  @Post("link/:id")
+  async addLink(@Param(new ObjectIDPipe()) eventID, @Body(new LinkListPipe()) links) : Promise<ControlResponse>{
+    return this.controlInterfaceService.addLink(eventID, links);
+  }
+
+  @Get("link/:id")
+  async getLinks(@Param(new ObjectIDPipe()) eventID){
+    return this.controlInterfaceService.getLinks(eventID);
+  }
+
+  @Delete("link/:id")
+  async deleteLink(@Param(new ObjectIDPipe()) id){
+    return this.controlInterfaceService.deleteLinks(id)
+  }
 }
