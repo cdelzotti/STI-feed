@@ -189,6 +189,20 @@ export class EventListCreateDialog{
   message : string;
   type : string;
   image;
+  links = [
+    {
+      name : "",
+      link : ""
+    },
+    {
+      name : "",
+      link : ""
+    },
+    {
+      name : "",
+      link : ""
+    },
+  ]
 
 
   constructor(
@@ -206,6 +220,7 @@ export class EventListCreateDialog{
 
   submit(){
     // Check that minimal fields are filled
+    // TODO assert dateFIn > Date debut
     if (!(this.localisation == undefined || this.impact == undefined || this.dateDebut == undefined || this.dateFin == undefined)) {
       // Assign default values
       if (this.relevant == undefined) {
@@ -214,6 +229,8 @@ export class EventListCreateDialog{
       if (this.type == undefined) {
         this.type = "manual"
       }
+      // Retrieve usable links
+      this.links = this.checkLinks();
       // Add new event
       this.eventService.createEvent({
         localisation : this.localisation,
@@ -233,11 +250,28 @@ export class EventListCreateDialog{
               console.log(imgResponse);
             })
           }
+
+          // upload links
+          if (this.links.length > 0) {
+            this.eventService.postLinks(controlResponse._id, this.links).subscribe((linkResponse) =>{
+              console.log(linkResponse);
+            });
+          }
           // reload event list
           this.closingCallback();
           this.fromPage.ngOnInit();
         }
       ); 
     }
+  }
+
+  checkLinks(){
+    let returnLinks = [];
+    for (const link in this.links) {
+      if ((this.links[link].name != "" && this.links[link].link != "")) {
+       returnLinks.push(this.links[link]);  
+      }
+    }
+    return returnLinks;
   }
 }

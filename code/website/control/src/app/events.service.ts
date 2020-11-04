@@ -63,4 +63,10 @@ export class EventsService{
       formData.append("file", image, image.name)
       return this.http.post<ControlResponse>(url, formData);
     }
+
+    postLinks(eventID : string, links) {
+      // TODO assert links
+      let url : string = `${environment.baseUrl}control/link/${eventID}`
+      return this.http.post<ControlResponse>(url, links)
+    }
 }
