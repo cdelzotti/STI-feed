@@ -6,19 +6,23 @@ import { HttpClientModule } from '@angular/common/http'
 
 import { AppComponent } from './app.component';
 import { TopBarComponent } from './top-bar/top-bar.component'
-import { EventListComponent } from './event-list/event-list.component'
+import { EventListComponent } from './event-list/event-list.component';
+import { EventDetailsComponent } from './event-details/event-details.component'
+import { AppRoutingModule } from "./routing/app-routing.module"
 
 @NgModule({
   declarations: [
     AppComponent,
     TopBarComponent,
-    EventListComponent
+    EventListComponent,
+    EventDetailsComponent
   ],
   imports: [
     BrowserModule,
     ReactiveFormsModule,
     MatIconModule,
     HttpClientModule,
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]
