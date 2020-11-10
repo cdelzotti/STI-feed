@@ -6,7 +6,7 @@ import { EventDetailsComponent } from "../event-details/event-details.component"
 
 const routes: Routes = [
   {
-    path : "events",
+    path : "",
     component : EventListComponent
   },
   {
@@ -16,7 +16,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

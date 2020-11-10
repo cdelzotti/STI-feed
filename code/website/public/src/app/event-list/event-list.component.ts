@@ -3,6 +3,7 @@ import { EventsService } from './../events.service'
 import { Event } from './event'
 import { ControlResponse } from './controlResponse'
 import { response } from 'express';
+import { ActivatedRoute } from '@angular/router'
 
 @Component({
   selector: 'event-list',
@@ -11,7 +12,10 @@ import { response } from 'express';
 })
 export class EventListComponent implements OnInit {
   
-  constructor (private eventService : EventsService ){}
+  constructor (
+    private eventService : EventsService,
+    private activateRoute : ActivatedRoute  
+  ){}
 
   events : Event[]
   controlResponse : ControlResponse
