@@ -9,4 +9,5 @@ export interface Event {
     message? : string,
     type? : string,
     info? : string
+    attachedFile?: string
 }

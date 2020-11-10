@@ -1,4 +1,5 @@
 export interface ControlResponse {
     status : string,
-    error : boolean
+    error : boolean,
+    _id?: string,
 }

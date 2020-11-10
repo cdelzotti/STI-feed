@@ -83,7 +83,7 @@ export class ControlInterfaceController {
     })
   }))
   async uploadAttached(@Param(new ObjectIDPipe()) id : ObjectID, @UploadedFile() file) : Promise<ControlResponse> {
-    return this.controlInterfaceService.registerAttached(id, file.filename)
+    return this.controlInterfaceService.registerAttached(id, file.filename);
   }
   
   @Delete("picture/:id")

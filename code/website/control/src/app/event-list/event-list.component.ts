@@ -3,8 +3,8 @@ import { EventsService } from './../events.service'
 import { Event } from './event'
 import { ControlResponse } from './controlResponse'
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { config } from 'process';
-import { ThrowStmt } from '@angular/compiler';
+import { environment } from '../../environments/environment';
+import { link } from '@hapi/joi';
 
 @Component({
   selector: 'event-list',
@@ -76,9 +76,7 @@ export class EventListComponent implements OnInit {
     });
 
     // Closing callback
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-    });
+    dialogRef.afterClosed().subscribe();
     
   }
 
@@ -87,10 +85,13 @@ export class EventListComponent implements OnInit {
         // Open dialog box
         const dialogRef = this.dialog.open(EventListCreateDialog, {
           data : {
-            fromPage : this
+            fromPage : this,
+            closingCallback : () => {
+              dialogRef.close()
+            }
           }
         });
-    
+
         // Closing callback
         dialogRef.afterClosed().subscribe(result => {
           console.log(`Dialog result: ${result}`);
@@ -142,6 +143,9 @@ export class EventListEditDialog {
 
   eventToEdit : Event;
   fromPage : EventListComponent;
+  backUrl : string;
+  image;
+  links;
 
   constructor(
     public dialogRef: MatDialogRef<EventListEditDialog>,
@@ -150,17 +154,81 @@ export class EventListEditDialog {
   ) {
     this.eventToEdit = data.eventEdit;
     this.fromPage = data.fromPage;
+    this.backUrl = environment.baseUrl;
+    this.links = [];
+    this.eventService.getLinks(this.eventToEdit._id).subscribe((response)=>{
+      this.links = response;
+      let newThresold : number = this.links.length;
+      let index : number = 0;
+      while (index < 5) {
+        if (index < newThresold) {
+          this.links[index]["new"] = false;
+        } else {
+          this.links.push({
+            name : "",
+            link : "",
+            new : true,
+          });
+        }
+        index++;
+      }
+    });
+  }
+
+  handleImage(){
+    this.image = (<HTMLInputElement>document.getElementById("editEventFileInput")).files[0]; 
+  }
+
+  handleLinkDelete(eventID){
+
+    this.eventService.deleteLinks(eventID).subscribe((controlResponse)=>{
+      for (let i = 0; i < this.links.length; i++) {
+          if (this.links[i]._id == eventID){
+            this.links[i]._id = undefined;
+            this.links[i].name = "";
+            this.links[i].link = ""
+            this.links[i].new = true
+          }
+      }
+    });
   }
 
   submit() {
+    let linksToSend : Array<any> = this.checkLinks();
     this.eventService.editEvent({
       _id : this.eventToEdit._id,
       message : this.eventToEdit.message,
       relevant : true
     }).subscribe((controlResponse) => {
+       // Upload image
+       if (this.image != undefined){
+        this.eventService.postImage(this.eventToEdit._id, this.image).subscribe((imgResponse) => {
+          console.log(imgResponse);
+          // Refresh the hosting component
+          this.fromPage.ngOnInit()
+        })
+      }
+
+      if (linksToSend.length > 0) {
+        this.eventService.postLinks(this.eventToEdit._id, linksToSend).subscribe();
+      }
+
       // Refresh the hosting component
       this.fromPage.ngOnInit()
     })
+  }
+
+  checkLinks() : Array<any>{
+    let validNewLinks : Array<any> = [];
+    for (let index = 0; index < this.links.length; index++) {
+      if (this.links[index].name != "" && this.links[index].link != "" && this.links[index].new) {
+        validNewLinks.push({
+          name : this.links[index].name,
+          link : this.links[index].link
+        });
+      }
+    }
+    return validNewLinks;
   }
 }
 
@@ -174,6 +242,8 @@ export class EventListCreateDialog{
   
   // Component that generated the dialogBox
   fromPage : EventListComponent;
+  // A callback to close the dialog
+  closingCallback; 
 
   // Event variables
   localisation : string;
@@ -185,44 +255,90 @@ export class EventListCreateDialog{
   relevant : boolean;
   message : string;
   type : string;
+  image;
+  links = [
+    {
+      name : "",
+      link : ""
+    },
+    {
+      name : "",
+      link : ""
+    },
+    {
+      name : "",
+      link : ""
+    },
+  ]
 
 
   constructor(
     public dialogRef: MatDialogRef<EventListCreateDialog>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data,
-    private eventService : EventsService
+    private eventService : EventsService,
   ) {
     this.fromPage = data.fromPage;
+    this.closingCallback = data.closingCallback;
+  }
+
+  handleImage(){
+    this.image = (<HTMLInputElement>document.getElementById("createEventFileInput")).files[0]; 
   }
 
   submit(){
     // Check that minimal fields are filled
-    if (this.localisation == undefined || this.impact == undefined || this.dateDebut == undefined || this.dateFin == undefined) {
-      // print error message
-    }
-    // Assign default values
-    if (this.relevant == undefined) {
-      this.relevant = false;
-    }
-    if (this.type == undefined) {
-      this.type = "manual"
-    }
-    // Add new event
-    this.eventService.createEvent({
-      localisation : this.localisation,
-      relevant : this.relevant,
-      dateDebut : `${this.dateDebut}T00:00:00.000Z`,
-      dateFin : `${this.dateFin}T00:00:00.000Z`,
-      impact : this.impact,
-      info : this.info,
-      source : this.source,
-      message : this.message,
-      type : this.type
-    }).subscribe(
-      (controlResponse) => {
-        // reload event list
-        this.fromPage.ngOnInit();
+    // TODO assert dateFIn > Date debut
+    if (!(this.localisation == undefined || this.impact == undefined || this.dateDebut == undefined || this.dateFin == undefined)) {
+      // Assign default values
+      if (this.relevant == undefined) {
+        this.relevant = false;
       }
-    );
+      if (this.type == undefined) {
+        this.type = "manual"
+      }
+      // Retrieve usable links
+      this.links = this.checkLinks();
+      // Add new event
+      this.eventService.createEvent({
+        localisation : this.localisation,
+        relevant : this.relevant,
+        dateDebut : `${this.dateDebut}T00:00:00.000Z`,
+        dateFin : `${this.dateFin}T00:00:00.000Z`,
+        impact : this.impact,
+        info : this.info,
+        source : this.source,
+        message : this.message,
+        type : this.type
+      }).subscribe(
+        (controlResponse) => {
+          // Upload image
+          if (this.image != undefined){
+            this.eventService.postImage(controlResponse._id, this.image).subscribe((imgResponse) => {
+              console.log(imgResponse);
+            })
+          }
+
+          // upload links
+          if (this.links.length > 0) {
+            this.eventService.postLinks(controlResponse._id, this.links).subscribe((linkResponse) =>{
+              console.log(linkResponse);
+            });
+          }
+          // reload event list
+          this.closingCallback();
+          this.fromPage.ngOnInit();
+        }
+      ); 
+    }
+  }
+
+  checkLinks(){
+    let returnLinks = [];
+    for (const link in this.links) {
+      if ((this.links[link].name != "" && this.links[link].link != "")) {
+       returnLinks.push(this.links[link]);  
+      }
+    }
+    return returnLinks;
   }
 }

@@ -55,4 +55,28 @@ export class EventsService{
       let eventUrl : string = `${environment.baseUrl}control/event/`
       return this.http.post<ControlResponse>(eventUrl, body)
     }
+
+    postImage(id : string, image){
+      // TODO assert image
+      let url : string = `${environment.baseUrl}control/picture/${id}`
+      let formData = new FormData();
+      formData.append("file", image, image.name)
+      return this.http.post<ControlResponse>(url, formData);
+    }
+
+    postLinks(eventID : string, links) {
+      // TODO assert links
+      let url : string = `${environment.baseUrl}control/link/${eventID}`
+      return this.http.post<ControlResponse>(url, links)
+    }
+
+    getLinks(eventID : string) {
+      let url : string = `${environment.baseUrl}control/link/${eventID}`
+      return this.http.get<ControlResponse>(url)
+    }
+
+    deleteLinks(eventID : string){
+      let url : string = `${environment.baseUrl}control/link/${eventID}`
+      return this.http.delete<ControlResponse>(url)
+    }
 }
