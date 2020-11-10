@@ -41,7 +41,7 @@ class EventChecker{
         thingReceived.dateFin = this.tryToParseDate(thingReceived["dateFin"])
       } 
     }
-
+    // Check ID and relevant
     for (const key in thingReceived) {
       if (this.allowedKey.includes(key)) {
         switch (key) {

@@ -69,4 +69,14 @@ export class EventsService{
       let url : string = `${environment.baseUrl}control/link/${eventID}`
       return this.http.post<ControlResponse>(url, links)
     }
+
+    getLinks(eventID : string) {
+      let url : string = `${environment.baseUrl}control/link/${eventID}`
+      return this.http.get<ControlResponse>(url)
+    }
+
+    deleteLinks(eventID : string){
+      let url : string = `${environment.baseUrl}control/link/${eventID}`
+      return this.http.delete<ControlResponse>(url)
+    }
 }
