@@ -1,0 +1,23 @@
+.description_container{
+    border: 2px solid salmon;
+    margin-left : 5%;
+    margin-right : 5%;
+}
+
+#description_title {
+    text-align: center;
+}
+
+#image_container{
+    margin-top: 1%;
+    float : left;
+    overflow: hidden;
+}
+
+.article_img{
+    width: 30%;
+}
+
+#description_text{
+    display: block;
+}

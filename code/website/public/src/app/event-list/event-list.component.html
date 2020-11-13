@@ -8,7 +8,7 @@
         <td>Type</td>
     </thead>
     <tr *ngFor="let event of events">
-        <td><a routerLink='details'>{{ event["localisation"] }}</a></td>
+        <td><a [routerLink]="['details', event._id]">{{ event["localisation"] }}</a></td>
         <td>{{ event["impact"] }}</td>
         <td>{{ beautifulDate(event["dateDebut"]) }}</td>
         <td>{{ beautifulDate(event["dateFin"]) }}</td>

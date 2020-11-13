@@ -1,7 +1,28 @@
-<!-- <h2>{{ currentEvent.info }}</h2>
+<div class="description_container" *ngIf="events == undefined">
+    <span>Chargement en cours...</span>
+</div>
 
-<p>{{ currentEvent.message }}</p>
+<div class="description_container" *ngIf="events != undefined">
+    <h1 id="description_title">{{ events[currentEventIndex].localisation }} : {{events[currentEventIndex].impact}}</h1>
 
-<p>Bisous</p> -->
+    <div class="article_body">
+        <span id="date_label">Du {{ events[currentEventIndex].dateDebut }} au {{ events[currentEventIndex].dateFin }}</span>
 
-<h1>COUCOU</h1>
+        <article id="image_container" *ngIf="events[currentEventIndex].attachedFile != '' && events[currentEventIndex].attachedFile != undefined">
+            <img class="article_img" src="{{backUrl}}pictures/{{events[currentEventIndex].attachedFile}}"/>
+        </article>
+
+        <article id="text_container">
+            <p id="description_text" *ngFor="let para of formattedMessage">{{ para }}</p>
+            
+        </article>
+    </div>
+    <div class="links_container"*ngIf="links != undefined">
+        <h2>Voir aussi</h2>
+        <ul *ngIf="links.length > 0">
+            <li *ngFor="let link of links">
+                <b><a href="{{ link.link }}">{{link.name}}</a></b>
+            </li>
+        </ul>
+    </div>
+</div>

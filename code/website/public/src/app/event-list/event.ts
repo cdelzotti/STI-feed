@@ -1,5 +1,5 @@
 export interface Event {
-    id : string,
+    _id : string,
     localisation : string,
     impact : string,
     dateDebut : string,
@@ -9,5 +9,5 @@ export interface Event {
     message : string,
     type : string,
     info : string,
-    attachedFile?
+    attachedFile? : string
 }
