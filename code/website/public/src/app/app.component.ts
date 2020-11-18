@@ -7,4 +7,5 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'Control Panel';
+  event : string = "TEST DE TRANSMISSION MAGGLE"
 }
