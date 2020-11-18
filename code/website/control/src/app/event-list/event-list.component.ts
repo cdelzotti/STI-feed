@@ -224,7 +224,7 @@ export class EventListEditDialog {
       if (this.links[index].name != "" && this.links[index].link != "" && this.links[index].new) {
         validNewLinks.push({
           name : this.links[index].name,
-          link : this.links[index].link
+          link : `http://${this.links[index].link}`
         });
       }
     }
@@ -336,6 +336,8 @@ export class EventListCreateDialog{
     let returnLinks = [];
     for (const link in this.links) {
       if ((this.links[link].name != "" && this.links[link].link != "")) {
+        // Add http:// before the url
+        this.links[link].link = `http://${this.links[link].link}`
        returnLinks.push(this.links[link]);  
       }
     }

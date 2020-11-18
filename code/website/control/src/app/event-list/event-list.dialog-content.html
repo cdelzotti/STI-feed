@@ -30,7 +30,7 @@
       <input *ngIf="link.new == true" [(ngModel)]="link.name"/>
       <input *ngIf="link.new == false" [(ngModel)]="link.name" disabled/>
       <b> Lien : </b>
-      <input *ngIf="link.new == true" [(ngModel)]="link.link"/>
+      <span>http://<input *ngIf="link.new == true" [(ngModel)]="link.link"/></span>
       <input *ngIf="link.new == false" [(ngModel)]="link.link" disabled/>
       <button *ngIf="link.new == false" class="mat-dialog-button" (click)="handleLinkDelete(link._id)" mat-button>Supprimer</button>
     </li>
