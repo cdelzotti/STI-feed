@@ -1,5 +1,7 @@
-import { Body, Controller, Delete, Get, Post, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Res } from '@nestjs/common';
 import { EventData } from '../data/data.entity'
+import { EventLinks } from '../control_interface/control_interface.entity'
+import { ObjectIDPipe } from '../control_interface/control_interface.pipe'
 import { OutputService } from './output.service'
 import { Response } from 'express'
 
@@ -21,6 +23,11 @@ export class OutputController {
    */
   async getPublicEvents(): Promise<EventData[]>{
     return this.outputService.getPublicEvents();
+  }
+
+  @Get("link/:id")
+  async getLinks(@Param(new ObjectIDPipe()) eventID): Promise<EventLinks[]>{
+    return this.outputService.getLinks(eventID);
   }
 
 }
