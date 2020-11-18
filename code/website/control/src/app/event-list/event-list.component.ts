@@ -186,8 +186,8 @@ export class EventListEditDialog {
           if (this.links[i]._id == eventID){
             this.links[i]._id = undefined;
             this.links[i].name = "";
-            this.links[i].link = ""
-            this.links[i].new = true
+            this.links[i].link = "";
+            this.links[i].new = true;
           }
       }
     });
@@ -297,7 +297,7 @@ export class EventListCreateDialog{
         this.type = "manual"
       }
       // Retrieve usable links
-      this.links = this.checkLinks();
+      let linksClean = this.checkLinks();
       // Add new event
       this.eventService.createEvent({
         localisation : this.localisation,
@@ -319,8 +319,8 @@ export class EventListCreateDialog{
           }
 
           // upload links
-          if (this.links.length > 0) {
-            this.eventService.postLinks(controlResponse._id, this.links).subscribe((linkResponse) =>{
+          if (linksClean.length > 0) {
+            this.eventService.postLinks(controlResponse._id, linksClean).subscribe((linkResponse) =>{
               console.log(linkResponse);
             });
           }
@@ -338,8 +338,8 @@ export class EventListCreateDialog{
       if ((this.links[link].name != "" && this.links[link].link != "")) {
         // Add http:// before the url
         this.links[link].link = `http://${this.links[link].link}`
-       returnLinks.push(this.links[link]);  
-      }
+      returnLinks.push(this.links[link]);  
+      } 
     }
     return returnLinks;
   }
