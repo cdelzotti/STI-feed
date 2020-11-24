@@ -1,0 +1,27 @@
+nav {
+    width: 60%;
+    margin: auto;
+    padding-right: 10%;
+}
+
+nav ul {
+    list-style-type: none;
+    margin-left: 30%;
+}
+
+nav ul li {
+    display: block;
+    float: inline-start;
+    border : 1px solid #1976d2;
+    padding-right: 5%;
+    padding-left: 5%;
+    margin: auto;
+}
+
+.nav_selection {
+    background-color: #1976d2;
+}
+
+.nav_selection a {
+    color : white;
+}

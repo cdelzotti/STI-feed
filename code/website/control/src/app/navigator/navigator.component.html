@@ -1,0 +1,7 @@
+<nav id="navBar">
+    <ul>
+        <li [ngClass]="navClasses[0].class"><a (click)="refreshNavSelection('events')" [routerLink]="['']">Évenements</a></li>
+        <li [ngClass]="navClasses[1].class"><a (click)="refreshNavSelection('messages')" [routerLink]="['messages']"> Messages</a></li>
+        <li [ngClass]="navClasses[2].class"><a (click)="refreshNavSelection('history')" [routerLink]="['history']">Historique</a></li>
+    </ul>
+</nav>

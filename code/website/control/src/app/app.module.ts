@@ -6,11 +6,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http';
 import { MatDialogModule, MatDialogContent, MatDialogActions} from "@angular/material/dialog"
 import { FormsModule } from '@angular/forms'
+import { RouterModule } from "@angular/router"
 
 
 import { AppComponent } from './app.component';
 import { TopBarComponent } from './top-bar/top-bar.component'
-import { EventListComponent, EventListEditDialog, EventListCreateDialog } from './event-list/event-list.component'
+import { EventListComponent, EventListEditDialog, EventListCreateDialog } from './event-list/event-list.component';
+import { NavigatorComponent } from './navigator/navigator.component'
+import { MessagesComponent } from './messages/messages.component';
+import { RouteurRoutingModule} from './routeur/routeur-routing.module';
+import { HistoryComponent } from './history/history.component'
 
 @NgModule({
   declarations: [
@@ -18,7 +23,10 @@ import { EventListComponent, EventListEditDialog, EventListCreateDialog } from '
     TopBarComponent,
     EventListComponent,
     EventListEditDialog,
-    EventListCreateDialog
+    EventListCreateDialog,
+    NavigatorComponent,
+    MessagesComponent,
+    HistoryComponent
   ],
   imports: [
     BrowserModule,
@@ -28,7 +36,9 @@ import { EventListComponent, EventListEditDialog, EventListCreateDialog } from '
     MatDialogModule,
     BrowserAnimationsModule,
     NoopAnimationsModule,
-    FormsModule
+    FormsModule,
+    RouteurRoutingModule,
+    RouterModule
   ],
   providers: [],
   bootstrap: [AppComponent]

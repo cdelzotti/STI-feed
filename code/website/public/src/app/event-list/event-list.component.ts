@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { EventsService } from './../events.service'
 import { Event } from './event'
 import { ControlResponse } from './controlResponse'
-import { response } from 'express';
 import { ActivatedRoute } from '@angular/router'
 
 @Component({
