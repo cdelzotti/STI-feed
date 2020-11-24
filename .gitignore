@@ -3,8 +3,4 @@ db.sqlite
 dist
 mongoData
 img
-<<<<<<< HEAD
 coverage
-=======
-coverage
->>>>>>> test
