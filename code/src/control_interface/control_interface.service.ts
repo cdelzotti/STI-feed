@@ -31,14 +31,12 @@ export class ControlInterfaceService {
     }
 
     /**
-     * Assign a message to a event
+     * Edit an event
      * 
      * @param eventID : an event's identifier
-     * @param message : a message that must be assigned to an event
-     * @requires eventID is int and != null
-     * @requires eventID > 0
-     * @requires eventID < max_event_index
-     * @returns request reponse
+     * @param event : The new structure of event you want
+     * @requires eventID must match in DN
+     * @returns ControlResponse
      */
     async editEvent(eventID: ObjectID, event) : Promise<ControlResponse>{
         let eventFromDB : EventData = await this.eventRepository.findOne(eventID);

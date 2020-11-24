@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Res, Req, Put, UseInterceptors, UploadedFile, Param, ParseBoolPipe} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Res, Req, Put, UseInterceptors, UploadedFile, Param, ParseBoolPipe, BadRequestException} from '@nestjs/common';
 import { ControlInterfaceService } from './control_interface.service'
 import { EventData } from '../data/data.entity'
 import { ControlResponse } from './control_interface.dto'
@@ -35,6 +35,7 @@ export class ControlInterfaceController {
   async getEvents(@Body(new EventWithCompDatePipe()) body) : Promise<EventData[]> {
     // TODO : assert body
     return this.controlInterfaceService.getEvents(body);
+
   }
 
   /**

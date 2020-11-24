@@ -19,18 +19,18 @@ import { MulterModule } from '@nestjs/platform-express'
     }),
     OutputModule, 
     TypeOrmModule.forRoot({
-    type : "mongodb",
-    host : "localhost",
-    database : "stifeed",
-    port : 27017,
-    synchronize : true,
-    username : "stiuser",
-    password : "root",
-    entities : [
-      EventData,
-      EventLinks
-    ],
-    useUnifiedTopology : true
+      type : "mongodb",
+      host : "localhost",
+      database : "stifeed",
+      port : 27017,
+      synchronize : true,
+      username : "stiuser",
+      password : "root",
+      entities : [
+        EventData,
+        EventLinks
+      ],
+      useUnifiedTopology : true
   })],
   controllers: [],
   providers: [],
