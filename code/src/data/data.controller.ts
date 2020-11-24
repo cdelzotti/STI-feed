@@ -1,10 +1,10 @@
-import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
-import { APRetreiver } from './data.service';
+import { Body, Controller, Delete, Get, Post, ParseBoolPipe } from '@nestjs/common';
+import { DataService } from './data.service';
 import { DataResponse } from './data.dto'
 
 @Controller("data/")
 export class DataController {
-  constructor(private readonly apRetreiver : APRetreiver) {}
+  constructor(private readonly apRetreiver : DataService) {}
 
   /**
    * Update database content
@@ -14,7 +14,7 @@ export class DataController {
    * @returns a DataResponse
    */
   @Post("update-ap/")
-  async getAP(@Body("await") forceAwait : boolean): Promise<DataResponse> {
+  async getAP(@Body("await", new ParseBoolPipe()) forceAwait : boolean): Promise<DataResponse> {
     let path : string = "static/AP.xlsx";
     if (forceAwait) {
       return this.apRetreiver.APextract(path); 

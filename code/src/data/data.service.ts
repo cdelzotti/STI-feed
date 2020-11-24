@@ -7,7 +7,7 @@ import { DataResponse } from './data.dto'
 
 
 @Injectable()
-export class APRetreiver {
+export class DataService {
   
     constructor(
         // Set the variable needed to access the database
