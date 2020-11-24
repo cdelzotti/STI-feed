@@ -41,11 +41,4 @@ describe('dataController', () => {
         }
     })
 
-    it("should enforce ISO string date", async() => {
-        expect(await controlController.addEvent({
-            source : 'testing',
-            relevant : false,
-            dateDebut : "13 octobre"
-        })).toBe(1)
-    })
 });
