@@ -1,47 +1,29 @@
+// Huge thanks to Enrique Arrieta who helped me setting up my tests with his nice blog !
+// https://earrieta.dev/mocking-our-mongodb-while-testing-in-nestjs-ck1a316df00izjfs1adaw9li6
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import { EventData } from './data/data.entity'
 import { EventLinks } from './control_interface/control_interface.entity'
-/**
- * Generates a false database used for testing.
- * 
- * To avoid any mistakes that would lead to thousands of different databases
- * making your hardrive struggling to survive, this class is conceived has
- * a Singleton.
- */
-export class DBMock{
-    private static instance : DBMock;
-    // The database mockup
-    private db : MongoMemoryServer;
-
-    private constructor(){
-        this.db = new MongoMemoryServer();
-    }
 
 
-    static getInstance(){
-        if(!DBMock.instance){
-            DBMock.instance = new DBMock();
-        }
-        return DBMock.instance;
-    }
+const mongod = new MongoMemoryServer();
 
-
-    /**
-     * Returns the database configuration
-     */
-    async getConfig() {
-        return TypeOrmModule.forRoot({
-            type : "mongodb",
-            host : "localhost",
-            database : await this.db.getDbName(),
-            port : await this.db.getPort(),
-            synchronize : true,
-            entities : [
-              EventData,
-              EventLinks
-            ],
-            useUnifiedTopology : true
-        })
-    }
-}
+export default (customOpts: any = {}) => TypeOrmModule.forRootAsync({
+    useFactory: async () => {
+      const port = await mongod.getPort();
+      const database = await mongod.getDbName();
+  
+      return {
+        type: 'mongodb',
+        host: '127.0.0.1',
+        port,
+        database,
+        useUnifiedTopology: true,
+        entities: [
+            EventData,
+            EventLinks
+        ],
+        ...customOpts,
+      };
+    },
+  });

@@ -1,23 +1,20 @@
-// Huge thanks to Enrique Arrieta who helped me setting up my tests !
-// https://earrieta.dev/mocking-our-mongodb-while-testing-in-nestjs-ck1a316df00izjfs1adaw9li6
-
 import { Test } from '@nestjs/testing'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { DBMock } from '../dbMock'
 import { DataController } from './data.controller'
 import { DataService } from './data.service'
 import { EventData } from './data.entity'
-
+import DBModule from '../dbMock'
 
 describe('dataController', () => {
     let dataController : DataController;
     let dataService : DataService;
-    let dbMock : DBMock = DBMock.getInstance();
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
             imports : [
-                dbMock.getConfig(),
+                DBModule({
+                    name: (new Date().getTime() * Math.random()).toString(16), // <-- This is to have a "unique" name for the connection
+                  }),
                 TypeOrmModule.forFeature([EventData])
             ],
             controllers : [DataController],
