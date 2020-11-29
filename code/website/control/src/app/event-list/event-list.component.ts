@@ -155,46 +155,13 @@ export class EventListEditDialog {
     this.eventToEdit = data.eventEdit;
     this.fromPage = data.fromPage;
     this.backUrl = environment.baseUrl;
-    this.links = [];
-    this.eventService.getLinks(this.eventToEdit._id).subscribe((response)=>{
-      this.links = response;
-      let newThresold : number = this.links.length;
-      let index : number = 0;
-      while (index < 5) {
-        if (index < newThresold) {
-          this.links[index]["new"] = false;
-        } else {
-          this.links.push({
-            name : "",
-            link : "",
-            new : true,
-          });
-        }
-        index++;
-      }
-    });
   }
 
   handleImage(){
     this.image = (<HTMLInputElement>document.getElementById("editEventFileInput")).files[0]; 
   }
 
-  handleLinkDelete(eventID){
-
-    this.eventService.deleteLinks(eventID).subscribe((controlResponse)=>{
-      for (let i = 0; i < this.links.length; i++) {
-          if (this.links[i]._id == eventID){
-            this.links[i]._id = undefined;
-            this.links[i].name = "";
-            this.links[i].link = "";
-            this.links[i].new = true;
-          }
-      }
-    });
-  }
-
   submit() {
-    let linksToSend : Array<any> = this.checkLinks();
     this.eventService.editEvent({
       _id : this.eventToEdit._id,
       message : this.eventToEdit.message,
@@ -209,26 +176,9 @@ export class EventListEditDialog {
         })
       }
 
-      if (linksToSend.length > 0) {
-        this.eventService.postLinks(this.eventToEdit._id, linksToSend).subscribe();
-      }
-
       // Refresh the hosting component
       this.fromPage.ngOnInit()
     })
-  }
-
-  checkLinks() : Array<any>{
-    let validNewLinks : Array<any> = [];
-    for (let index = 0; index < this.links.length; index++) {
-      if (this.links[index].name != "" && this.links[index].link != "" && this.links[index].new) {
-        validNewLinks.push({
-          name : this.links[index].name,
-          link : `http://${this.links[index].link}`
-        });
-      }
-    }
-    return validNewLinks;
   }
 }
 
@@ -256,20 +206,6 @@ export class EventListCreateDialog{
   message : string;
   type : string;
   image;
-  links = [
-    {
-      name : "",
-      link : ""
-    },
-    {
-      name : "",
-      link : ""
-    },
-    {
-      name : "",
-      link : ""
-    },
-  ]
 
 
   constructor(
@@ -296,8 +232,6 @@ export class EventListCreateDialog{
       if (this.type == undefined) {
         this.type = "manual"
       }
-      // Retrieve usable links
-      let linksClean = this.checkLinks();
       // Add new event
       this.eventService.createEvent({
         localisation : this.localisation,
@@ -315,32 +249,14 @@ export class EventListCreateDialog{
           if (this.image != undefined){
             this.eventService.postImage(controlResponse._id, this.image).subscribe((imgResponse) => {
               console.log(imgResponse);
+              this.fromPage.ngOnInit();
             })
-          }
-
-          // upload links
-          if (linksClean.length > 0) {
-            this.eventService.postLinks(controlResponse._id, linksClean).subscribe((linkResponse) =>{
-              console.log(linkResponse);
-            });
-          }
+          }          
           // reload event list
           this.closingCallback();
-          this.fromPage.ngOnInit();
         }
       ); 
     }
   }
 
-  checkLinks(){
-    let returnLinks = [];
-    for (const link in this.links) {
-      if ((this.links[link].name != "" && this.links[link].link != "")) {
-        // Add http:// before the url
-        this.links[link].link = `http://${this.links[link].link}`
-      returnLinks.push(this.links[link]);  
-      } 
-    }
-    return returnLinks;
-  }
 }

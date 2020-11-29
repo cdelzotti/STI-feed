@@ -23,21 +23,6 @@
     Un fichier existe déjà, il est disponible <a href="{{backUrl}}pictures/{{eventToEdit.attachedFile}}">ici</a>. En uploader un nouveau l'effacera.
   </span><br/>
 
-  <b>Liens annexes</b>
-  <ul>
-    <li *ngFor="let link of links">
-      <b>Nom : </b>
-      <input *ngIf="link.new == true" [(ngModel)]="link.name"/>
-      <input *ngIf="link.new == false" [(ngModel)]="link.name" disabled/>
-      <b> Lien : </b>
-      <span *ngIf="link.new == true" >http://<input [(ngModel)]="link.link"/></span>
-      <span *ngIf="link.new == false"><input [(ngModel)]="link.link" disabled/></span>
-      <button *ngIf="link.new == false" class="mat-dialog-button" (click)="handleLinkDelete(link._id)" mat-button>Supprimer</button>
-    </li>
-  </ul>
-  <span *ngIf="links.length == 0">
-    Aucun lien n'a été joint
-  </span>
 
 </mat-dialog-content>
 <mat-dialog-actions align="end">
