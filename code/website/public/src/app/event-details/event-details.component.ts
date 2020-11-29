@@ -23,7 +23,6 @@ export class EventDetailsComponent implements OnInit {
 
   events : Event[];
   formattedMessage : string[];
-  links : Array<any>;
   currentEventIndex : Number;
   backUrl : string = environment.baseUrl;
   init : boolean;
@@ -49,11 +48,6 @@ export class EventDetailsComponent implements OnInit {
           }
         }
         this.format();
-        // Retrieve links
-        this.eventService.getLinks(this.events[this.currentEventIndex.toString()]._id).subscribe((response) => {
-          this.links = <any>response; 
-          this.init = true;
-        })
       })
     })
   }
