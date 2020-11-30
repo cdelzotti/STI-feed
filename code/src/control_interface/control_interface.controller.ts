@@ -4,7 +4,7 @@ import { EventData } from '../data/data.entity'
 import { ControlResponse } from './control_interface.dto'
 import * as assert from 'assert'
 import { Response } from 'express'
-import { EventWithCompDatePipe, EventWithIDPipe, EventWithoutIDPipe, NormalEventPipe, ObjectIDPipe, LinkListPipe} from "./control_interface.pipe"
+import { EventWithCompDatePipe, EventWithIDPipe, EventWithoutIDPipe, NormalEventPipe, ObjectIDPipe, MessagePipe} from "./control_interface.pipe"
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer'
 import { handleFileName } from '../utils/upload-file.utils'
@@ -94,7 +94,7 @@ export class ControlInterfaceController {
   }
 
   @Post("msg/:id")
-  async addMsg(@Param(new ObjectIDPipe()) eventID, @Body() msg) : Promise<ControlResponse>{
+  async addMsg(@Param(new ObjectIDPipe()) eventID, @Body(new MessagePipe(0, false)) msg) : Promise<ControlResponse>{
     return this.controlInterfaceService.addMessage(eventID, msg);
   }
 
