@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { OutputController } from './output.controller'
 import { OutputService } from './output.service'
 import { EventData } from '../data/data.entity'
-import { EventLinks } from '../control_interface/control_interface.entity'
+import { Messages } from '../control_interface/control_interface.entity'
 import DBModule from '../dbMock'
 
 describe('outputController', () => {
@@ -16,7 +16,7 @@ describe('outputController', () => {
                 DBModule({
                     name: (new Date().getTime() * Math.random()).toString(16), // <-- This is to have a "unique" name for the connection
                   }),
-                TypeOrmModule.forFeature([EventData, EventLinks])
+                TypeOrmModule.forFeature([EventData, Messages])
             ],
             controllers : [OutputController],
             providers : [OutputService]

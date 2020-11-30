@@ -5,7 +5,7 @@ import DBModule from '../dbMock'
 import { ControlInterfaceController } from './control_interface.controller'
 import { ControlInterfaceService } from './control_interface.service'
 import { EventData } from '../data/data.entity'
-import { EventLinks } from './control_interface.entity'
+import { Messages } from './control_interface.entity'
 import { ObjectID } from "mongodb"
 
 describe('control', () => {
@@ -19,7 +19,7 @@ describe('control', () => {
                 DBModule({
                     name: (new Date().getTime() * Math.random()).toString(16), // <-- This is to have a "unique" name for the connection
                 }),
-                TypeOrmModule.forFeature([EventData, EventLinks])
+                TypeOrmModule.forFeature([EventData, Messages])
             ],
             controllers : [ControlInterfaceController],
             providers : [ControlInterfaceService]

@@ -1,6 +1,6 @@
 import { Entity, Column, ObjectID, ObjectIdColumn, OneToMany} from 'typeorm';
 import { IsString, IsInt, IsBoolean, IsDate } from 'class-validator';
-import { EventLinks } from '../control_interface/control_interface.entity'
+import { Messages } from '../control_interface/control_interface.entity'
 
 
 @Entity("EventData")
@@ -49,6 +49,6 @@ export class EventData{
     @Column({ nullable: true })
     attachedFile? : string;
 
-    @OneToMany(() => EventLinks, links => links.link)
-    links : EventLinks[];
+    @OneToMany(() => Messages, msg => msg.relatedEvent)
+    messages : Messages[];
 }

@@ -92,18 +92,18 @@ export class ControlInterfaceController {
     return this.controlInterfaceService.registerAttached(id, "")
   }
 
-  @Post("link/:id")
+  @Post("msg/:id")
   async addLink(@Param(new ObjectIDPipe()) eventID, @Body(new LinkListPipe()) links) : Promise<ControlResponse>{
-    return this.controlInterfaceService.addLink(eventID, links);
+    return this.controlInterfaceService.addMessage(eventID, links);
   }
 
-  @Get("link/:id")
+  @Get("msg/:id")
   async getLinks(@Param(new ObjectIDPipe()) eventID){
-    return this.controlInterfaceService.getLinks(eventID);
+    return this.controlInterfaceService.getEventMessage(eventID);
   }
 
-  @Delete("link/:id")
+  @Delete("msg/:id")
   async deleteLink(@Param(new ObjectIDPipe()) id){
-    return this.controlInterfaceService.deleteLinks(id)
+    return this.controlInterfaceService.deleteMessage(id)
   }
 }

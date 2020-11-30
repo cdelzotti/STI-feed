@@ -1,7 +1,7 @@
-import { BadRequestException, Injectable, Post} from '@nestjs/common';
+import { BadRequestException, InternalServerErrorException ,Injectable, Post} from '@nestjs/common';
 import { Db, Repository, Equal, MoreThan} from 'typeorm';
 import { EventData } from '../data/data.entity'
-import { EventLinks } from './control_interface.entity'
+import { Messages } from './control_interface.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ControlResponse } from './control_interface.dto'
 import { ObjectID } from 'mongodb'
@@ -14,8 +14,8 @@ export class ControlInterfaceService {
         // Create variable needed to access database
         @InjectRepository(EventData)
         private eventRepository : Repository<EventData>,
-        @InjectRepository(EventLinks)
-        private linksRepository : Repository<EventLinks>
+        @InjectRepository(Messages)
+        private linksRepository : Repository<Messages>
     ){}
 
     /**
@@ -126,25 +126,22 @@ export class ControlInterfaceService {
 
 
     /**
-     * Add links to the DB
+     * Add a message into the db
      * 
-     * @param eventID The ID the new link must be related to
-     * @param links A list of links (dict with name & link keys)
+     * @param eventID Event identifier
+     * @param message Message that should be added to the DB
      */
-    async addLink(eventID : ObjectID, links) : Promise<ControlResponse> {
-        for (let index = 0; index < links.length; index++) {
-            await this.linksRepository.insert({
-                name : links[index].name,
-                link : links[index].link,
-                relatedEvent : eventID
-            }).catch((e => {
-                throw new BadRequestException(
-                {
-                    status : `${e}`,
-                    error : true
-                });
-            }));
-        }
+    async addMessage(eventID : ObjectID, message : Messages) : Promise<ControlResponse> {
+        message.relatedEvent = eventID;
+        await this.linksRepository.insert(message).catch((e => {
+            // Case in wich the adding failed
+            // Probably a connection problem with the DB
+            throw new InternalServerErrorException(
+            {
+                status : `${e}`,
+                error : true
+            });
+        }));
         return {
             status : "",
             error : false
@@ -152,32 +149,32 @@ export class ControlInterfaceService {
     }
 
     /**
-     * Get every links related to a given event
+     * Get every messages related to a given event
      * 
      * @param eventID The ID of an event
      * @returns Every links related to `eventID`
      */
-    async getLinks(eventID : ObjectID) : Promise<EventLinks[]> {
+    async getEventMessage(eventID : ObjectID) : Promise<Messages[]> {
         return this.linksRepository.find({
                 where : {
                     relatedEvent : eventID
                 },
                 order : {
-                    name : "ASC"
+                    dateDebut : "ASC"
                 }
             });
     }
 
     /**
-     * Delete a link
+     * Delete a Message
      * 
-     * @param id the ID of the link you want to delete
+     * @param id the ID of the message you want to delete
      */
-    async deleteLinks(id : ObjectID) : Promise<ControlResponse>{
+    async deleteMessage(id : ObjectID) : Promise<ControlResponse>{
         await this.linksRepository.delete({
             _id : id
         }).catch( (e) => {
-            throw new BadRequestException({
+            throw new InternalServerErrorException({
                 status : `${e}`,
                 error : true
             });

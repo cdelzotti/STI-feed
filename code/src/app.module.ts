@@ -6,7 +6,7 @@ import { OutputModule } from './output/output.module';
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Connection } from 'typeorm'
 import { EventData } from './data/data.entity'
-import { EventLinks } from './control_interface/control_interface.entity'
+import { Messages } from './control_interface/control_interface.entity'
 import { MulterModule } from '@nestjs/platform-express'
 
 @Module({
@@ -28,7 +28,7 @@ import { MulterModule } from '@nestjs/platform-express'
       password : "root",
       entities : [
         EventData,
-        EventLinks
+        Messages
       ],
       useUnifiedTopology : true
   })],
