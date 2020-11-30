@@ -25,9 +25,9 @@ export class OutputController {
     return this.outputService.getPublicEvents();
   }
 
-  @Get("link/:id")
-  async getLinks(@Param(new ObjectIDPipe()) eventID): Promise<Messages[]>{
-    return this.outputService.getMessages(eventID);
+  @Get("msg/")
+  async getMsg(): Promise<Messages[]>{
+    return this.outputService.getMessages();
   }
 
 }

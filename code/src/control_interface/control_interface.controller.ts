@@ -11,6 +11,7 @@ import { handleFileName } from '../utils/upload-file.utils'
 import { identity } from 'rxjs/internal/util/identity';
 import { ObjectID } from 'mongodb';
 import { get } from 'http';
+import { Messages } from './control_interface.entity';
 
 @Controller("control/")
 export class ControlInterfaceController {
@@ -98,13 +99,18 @@ export class ControlInterfaceController {
   }
 
   @Post("getMsg/")
-  async getMsg(msg){
-    return this.getMsg(msg);
+  async getMsg(@Body() msg){
+    return this.controlInterfaceService.getMessages(msg);
   }
 
   @Delete("msg/:id")
   async deleteMessage(@Param(new ObjectIDPipe()) id){
     return this.controlInterfaceService.deleteMessage(id)
+  }
+
+  @Put("msg/")
+  async editMessage(@Body() msg : Messages) : Promise<ControlResponse>{
+    return this.controlInterfaceService.editMessage(msg);
   }
 
 

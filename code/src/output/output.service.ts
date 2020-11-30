@@ -36,20 +36,15 @@ export class OutputService {
     }
 
         /**
-     * Get every Messages related to a given event
+     * Get every up to date Messages 
      * 
-     * @param eventID The ID of an event
      * @returns Every Messages related to `eventID`
      */
-    async getMessages(eventID : ObjectID) : Promise<Messages[]> {
-        // Checks if the requested event is marked as relevant
-        let requestedEvent : EventData =  await this.eventRepository.findOne(eventID)
-        if (requestedEvent == undefined) {
-            throw new BadRequestException("That event doesn't exist")
-        }
+    async getMessages() : Promise<Messages[]> {
+        // TODO : Limiter la date
          return this.messagesRepository.find({
             where : {
-                relatedEvent : eventID,
+
             },
             order : {
                 dateDebut : "ASC"

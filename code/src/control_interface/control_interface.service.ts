@@ -35,7 +35,7 @@ export class ControlInterfaceService {
      * 
      * @param eventID : an event's identifier
      * @param event : The new structure of event you want
-     * @requires eventID must match in DN
+     * @requires eventID must match in DB
      * @returns ControlResponse
      */
     async editEvent(eventID: ObjectID, event) : Promise<ControlResponse>{
@@ -143,6 +143,7 @@ export class ControlInterfaceService {
             });
         }));
         return {
+            _id : message._id.toString(),
             status : "",
             error : false
         };
