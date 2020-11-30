@@ -1,4 +1,4 @@
-import { BadRequestException, InternalServerErrorException ,Injectable, Post} from '@nestjs/common';
+import { BadRequestException, InternalServerErrorException, NotFoundException ,Injectable, Post} from '@nestjs/common';
 import { Db, Repository, Equal, MoreThan} from 'typeorm';
 import { EventData } from '../data/data.entity'
 import { Messages } from './control_interface.entity'
@@ -15,7 +15,7 @@ export class ControlInterfaceService {
         @InjectRepository(EventData)
         private eventRepository : Repository<EventData>,
         @InjectRepository(Messages)
-        private linksRepository : Repository<Messages>
+        private messagesRepository : Repository<Messages>
     ){}
 
     /**
@@ -41,7 +41,7 @@ export class ControlInterfaceService {
     async editEvent(eventID: ObjectID, event) : Promise<ControlResponse>{
         let eventFromDB : EventData = await this.eventRepository.findOne(eventID);
         if (eventFromDB == undefined) {
-            throw new BadRequestException("Couldn't find an event with that ID")
+            throw new NotFoundException("Couldn't find an event with that ID")
         }
         await this.eventRepository.save(event).catch( (e) => {
             throw new BadRequestException({
@@ -133,7 +133,7 @@ export class ControlInterfaceService {
      */
     async addMessage(eventID : ObjectID, message : Messages) : Promise<ControlResponse> {
         message.relatedEvent = eventID;
-        await this.linksRepository.insert(message).catch((e => {
+        await this.messagesRepository.insert(message).catch((e => {
             // Case in wich the adding failed
             // Probably a connection problem with the DB
             throw new InternalServerErrorException(
@@ -155,10 +155,22 @@ export class ControlInterfaceService {
      * @returns Every links related to `eventID`
      */
     async getEventMessage(eventID : ObjectID) : Promise<Messages[]> {
-        return this.linksRepository.find({
+        return this.messagesRepository.find({
                 where : {
                     relatedEvent : eventID
                 },
+                order : {
+                    dateDebut : "ASC"
+                }
+            });
+    }
+
+    /**
+     * @returns Every messages matching body description
+     */
+    async getMessages(body : Messages) : Promise<Messages[]> {
+        return this.messagesRepository.find({
+                where : body,
                 order : {
                     dateDebut : "ASC"
                 }
@@ -171,7 +183,7 @@ export class ControlInterfaceService {
      * @param id the ID of the message you want to delete
      */
     async deleteMessage(id : ObjectID) : Promise<ControlResponse>{
-        await this.linksRepository.delete({
+        await this.messagesRepository.delete({
             _id : id
         }).catch( (e) => {
             throw new InternalServerErrorException({
@@ -183,5 +195,29 @@ export class ControlInterfaceService {
             status : '',
             error : false
         }
+    }
+
+    /**Update a message
+     * 
+     * @param msg The message updated structure
+     * 
+     * @requires msg must contains an _id
+     */
+    async editMessage(msg : Messages) : Promise<ControlResponse>{
+        let msgFromDB : Messages = await this.messagesRepository.findOne(msg._id);
+        if (msgFromDB == undefined) {
+            throw new NotFoundException("Couldn't find an event with that ID")
+        }
+        await this.eventRepository.save(msg).catch( (e) => {
+            throw new BadRequestException({
+                status : `${e}`,
+                error : true
+            });
+        });
+        return {
+            _id : msg._id.toString(),
+            status : "",
+            error : false
+        };
     }
 }

@@ -93,17 +93,23 @@ export class ControlInterfaceController {
   }
 
   @Post("msg/:id")
-  async addLink(@Param(new ObjectIDPipe()) eventID, @Body(new LinkListPipe()) links) : Promise<ControlResponse>{
-    return this.controlInterfaceService.addMessage(eventID, links);
+  async addMsg(@Param(new ObjectIDPipe()) eventID, @Body() msg) : Promise<ControlResponse>{
+    return this.controlInterfaceService.addMessage(eventID, msg);
   }
 
-  @Get("msg/:id")
-  async getLinks(@Param(new ObjectIDPipe()) eventID){
-    return this.controlInterfaceService.getEventMessage(eventID);
+  @Post("getMsg/")
+  async getMsg(msg){
+    return this.getMsg(msg);
   }
 
   @Delete("msg/:id")
-  async deleteLink(@Param(new ObjectIDPipe()) id){
+  async deleteMessage(@Param(new ObjectIDPipe()) id){
     return this.controlInterfaceService.deleteMessage(id)
+  }
+
+
+  @Get("eventmsg/:id")
+  async getEventMessages(@Param(new ObjectIDPipe()) eventID){
+    return this.controlInterfaceService.getEventMessage(eventID);
   }
 }

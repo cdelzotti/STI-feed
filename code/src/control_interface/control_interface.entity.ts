@@ -29,5 +29,5 @@ export class Messages{
     type? : string;
     
     @ManyToOne(() => EventData, relatedEvent => relatedEvent.messages)
-    relatedEvent : EventData;
+    relatedEvent? : EventData;
 }
