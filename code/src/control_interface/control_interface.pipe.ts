@@ -211,8 +211,12 @@ export class MessagePipe implements PipeTransform {
       if ( !allowedKeys.includes(key)) {
         throw new BadRequestException(`${key} is not a valid key`)
       }
-      if (key == "_id" || key == "relatedEvent") {
+      if (key == "_id") {
         thingReceived[key] = UsualFunctions.convertID(thingReceived[key]);
+      }
+      if (key == "relatedEvent") {
+        // Just check it, no convertion
+        UsualFunctions.convertID(thingReceived[key])
       }
       if (key == "dateDebut" || key == "dateFin"){
         if (this.dateComparison) {

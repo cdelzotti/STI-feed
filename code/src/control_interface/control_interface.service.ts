@@ -206,7 +206,7 @@ export class ControlInterfaceService {
     async editMessage(msg : Messages) : Promise<ControlResponse>{
         let msgFromDB : Messages = await this.messagesRepository.findOne(msg._id);
         if (msgFromDB == undefined) {
-            throw new NotFoundException("Couldn't find an event with that ID");
+            throw new NotFoundException("Couldn't find a message with that ID");
         }
         await this.messagesRepository.save(msg).catch( (e) => {
             throw new BadRequestException({

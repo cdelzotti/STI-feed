@@ -29,6 +29,6 @@ export class Messages{
     type? : string;
     
     @Column()
-    @ObjectIdColumn()
-    relatedEvent? : EventData;
+    @IsString()
+    relatedEvent? : string;
 }
