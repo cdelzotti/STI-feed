@@ -28,6 +28,7 @@ export class Messages{
     @IsString()
     type? : string;
     
-    @ManyToOne(() => EventData, relatedEvent => relatedEvent.messages)
+    @Column()
+    @ObjectIdColumn()
     relatedEvent? : EventData;
 }

@@ -178,12 +178,7 @@ export class NormalEventPipe implements PipeTransform {
 export class ObjectIDPipe implements PipeTransform {
 
   transform(thingReceived: any, metadata: ArgumentMetadata) : ObjectID {
-    try {
-      thingReceived = new ObjectID(thingReceived.id);
-    } catch (error) {
-      throw new BadRequestException(`Could not parse ${thingReceived.id} into a mongodb ObjectID`)
-    }
-    return thingReceived;
+    return UsualFunctions.convertID(thingReceived.id);
   }
 }
 
@@ -211,7 +206,7 @@ export class MessagePipe implements PipeTransform {
 
   transform(thingReceived: any, metadata: ArgumentMetadata) : ObjectID {
     let allowedKeys : string[] = ["_id", "dateDebut", "dateFin", "title", "content", "type", "relatedEvent"]
-    
+    UsualFunctions.forceIDImportanceCompliance(thingReceived, this.idImportance);
     for (const key in thingReceived) {
       if ( !allowedKeys.includes(key)) {
         throw new BadRequestException(`${key} is not a valid key`)
@@ -221,7 +216,9 @@ export class MessagePipe implements PipeTransform {
       }
       if (key == "dateDebut" || key == "dateFin"){
         if (this.dateComparison) {
-          // UsualFunctions.tryToParseComparativeDate()
+          thingReceived[key] = UsualFunctions.tryToParseComparativeDate(thingReceived[key]);
+        } else {
+          thingReceived[key] = UsualFunctions.tryToParseDate(thingReceived[key])
         }
       }
     }

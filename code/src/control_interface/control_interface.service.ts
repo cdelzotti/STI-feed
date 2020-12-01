@@ -131,9 +131,8 @@ export class ControlInterfaceService {
      * @param eventID Event identifier
      * @param message Message that should be added to the DB
      */
-    async addMessage(eventID : ObjectID, message : Messages) : Promise<ControlResponse> {
-        message.relatedEvent = eventID;
-        await this.messagesRepository.insert(message).catch((e => {
+    async addMessage(message : Messages) : Promise<ControlResponse> {
+       await this.messagesRepository.insert(message).catch((e => {
             // Case in wich the adding failed
             // Probably a connection problem with the DB
             throw new InternalServerErrorException(
@@ -169,7 +168,7 @@ export class ControlInterfaceService {
     /**
      * @returns Every messages matching body description
      */
-    async getMessages(body : Messages) : Promise<Messages[]> {
+    async getMessages(body) : Promise<Messages[]> {
         return this.messagesRepository.find({
                 where : body,
                 order : {
@@ -207,9 +206,9 @@ export class ControlInterfaceService {
     async editMessage(msg : Messages) : Promise<ControlResponse>{
         let msgFromDB : Messages = await this.messagesRepository.findOne(msg._id);
         if (msgFromDB == undefined) {
-            throw new NotFoundException("Couldn't find an event with that ID")
+            throw new NotFoundException("Couldn't find an event with that ID");
         }
-        await this.eventRepository.save(msg).catch( (e) => {
+        await this.messagesRepository.save(msg).catch( (e) => {
             throw new BadRequestException({
                 status : `${e}`,
                 error : true

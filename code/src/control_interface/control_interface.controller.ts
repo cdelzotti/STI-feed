@@ -92,15 +92,15 @@ export class ControlInterfaceController {
   async removeAttached(@Param(new ObjectIDPipe()) id : ObjectID) : Promise<ControlResponse>{
     return this.controlInterfaceService.registerAttached(id, "")
   }
-
-  @Post("msg/:id")
-  async addMsg(@Param(new ObjectIDPipe()) eventID, @Body(new MessagePipe(0, false)) msg) : Promise<ControlResponse>{
-    return this.controlInterfaceService.addMessage(eventID, msg);
+  
+  @Post("getMsg/")
+  async getMsg(@Body(new MessagePipe(1, true)) msg){
+    return this.controlInterfaceService.getMessages(msg);
   }
 
-  @Post("getMsg/")
-  async getMsg(@Body() msg){
-    return this.controlInterfaceService.getMessages(msg);
+  @Post("msg/")
+  async addMsg(@Body(new MessagePipe(0, false)) msg) : Promise<ControlResponse>{
+    return this.controlInterfaceService.addMessage(msg);
   }
 
   @Delete("msg/:id")
@@ -109,7 +109,7 @@ export class ControlInterfaceController {
   }
 
   @Put("msg/")
-  async editMessage(@Body() msg : Messages) : Promise<ControlResponse>{
+  async editMessage(@Body(new MessagePipe(2, false)) msg) : Promise<ControlResponse>{
     return this.controlInterfaceService.editMessage(msg);
   }
 

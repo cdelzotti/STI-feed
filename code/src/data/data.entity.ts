@@ -48,7 +48,4 @@ export class EventData{
     @IsString()
     @Column({ nullable: true })
     attachedFile? : string;
-
-    @OneToMany(() => Messages, msg => msg.relatedEvent)
-    messages : Messages[];
 }
