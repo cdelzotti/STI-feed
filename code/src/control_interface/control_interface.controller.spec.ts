@@ -104,7 +104,7 @@ describe('control', () => {
                 title : "Test message",
                 content : "PLOUF",
                 type : "TEST",
-                releatedEvent : responseAdd._id.toString()
+                relatedEvent : responseAdd._id
             })
             expect(responseMsgAdd.error).toBe(false);
             // retreive a message

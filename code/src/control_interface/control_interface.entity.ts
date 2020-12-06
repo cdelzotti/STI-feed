@@ -1,5 +1,5 @@
 import { Entity, Column, ObjectID, ObjectIdColumn, ManyToOne, Unique} from 'typeorm';
-import { IsString, IsInt, IsBoolean, IsDate } from 'class-validator';
+import { IsString, IsInt, IsBoolean, IsDate, isBoolean } from 'class-validator';
 import { EventData } from '../data/data.entity'
 
 @Entity("Messages")
@@ -27,6 +27,10 @@ export class Messages{
     @Column()
     @IsString()
     type? : string;
+
+    @Column()
+    @IsBoolean()
+    published : boolean;
     
     @Column()
     @IsString()

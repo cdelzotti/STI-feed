@@ -132,20 +132,28 @@ export class ControlInterfaceService {
      * @param message Message that should be added to the DB
      */
     async addMessage(message : Messages) : Promise<ControlResponse> {
-       await this.messagesRepository.insert(message).catch((e => {
-            // Case in wich the adding failed
-            // Probably a connection problem with the DB
-            throw new InternalServerErrorException(
-            {
-                status : `${e}`,
-                error : true
-            });
-        }));
-        return {
-            _id : message._id.toString(),
-            status : "",
-            error : false
-        };
+        if ( await this.eventExist(new ObjectID(message.relatedEvent))) {
+
+            if (message.published == undefined) {
+                message.published = false;
+            }
+            await this.messagesRepository.insert(message).catch((e => {
+                // Case in wich the adding failed
+                // Probably a connection problem with the DB
+                throw new InternalServerErrorException(
+                {
+                    status : `${e}`,
+                    error : true
+                });
+            }));
+            return {
+                _id : message._id.toString(),
+                status : "",
+                error : false
+            };
+        } else {
+            throw new BadRequestException(`${message.relatedEvent} n'est associé à aucun évènement`)
+        }
     }
 
     /**
