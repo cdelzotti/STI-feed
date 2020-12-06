@@ -6,6 +6,7 @@ import { environment } from '../environments/environment'
 
 import { Event } from './event-list/event'
 import { ControlResponse } from './event-list/controlResponse'
+import { Message } from './messages/message'
 
 let httpOpt = {
   headers : new HttpHeaders({
@@ -64,19 +65,27 @@ export class EventsService{
       return this.http.post<ControlResponse>(url, formData);
     }
 
-    postLinks(eventID : string, links) {
-      // TODO assert links
-      let url : string = `${environment.baseUrl}control/link/${eventID}`
-      return this.http.post<ControlResponse>(url, links)
+    postMessage(body) {
+      // TODO assert body
+      let url : string = `${environment.baseUrl}control/msg/`
+      return this.http.post<ControlResponse>(url, body)
     }
 
-    getLinks(eventID : string) {
-      let url : string = `${environment.baseUrl}control/link/${eventID}`
-      return this.http.get<ControlResponse>(url)
+    getMessages(body) {
+      // TODO assert body
+      let url : string = `${environment.baseUrl}control/getMsg/`
+      return this.http.post<Message[]>(url, body)
     }
 
-    deleteLinks(eventID : string){
-      let url : string = `${environment.baseUrl}control/link/${eventID}`
+    updateMesssage(body) {
+      // TODO assert body
+      let url : string = `${environment.baseUrl}control/msg/`
+      return this.http.put<ControlResponse>(url, body)
+    }
+
+    deleteMessage(messageID : string){
+      // TODO assert body
+      let url : string = `${environment.baseUrl}control/msg/${messageID}`
       return this.http.delete<ControlResponse>(url)
     }
 }

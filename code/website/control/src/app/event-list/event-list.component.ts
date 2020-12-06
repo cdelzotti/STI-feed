@@ -4,7 +4,6 @@ import { Event } from './event'
 import { ControlResponse } from './controlResponse'
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { environment } from '../../environments/environment';
-import { link } from '@hapi/joi';
 
 @Component({
   selector: 'event-list',

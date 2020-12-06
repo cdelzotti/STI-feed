@@ -1,0 +1,11 @@
+#messagesTable{
+    width: 100%;
+}
+
+#messagesTable thead{
+    font-weight: bold;
+}
+
+#messagesTable tbody tr:hover{
+    background-color: lightgray;
+}

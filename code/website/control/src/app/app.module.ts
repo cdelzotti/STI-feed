@@ -15,7 +15,8 @@ import { EventListComponent, EventListEditDialog, EventListCreateDialog } from '
 import { NavigatorComponent } from './navigator/navigator.component'
 import { MessagesComponent } from './messages/messages.component';
 import { RouteurRoutingModule} from './routeur/routeur-routing.module';
-import { HistoryComponent } from './history/history.component'
+import { HistoryComponent } from './history/history.component';
+import { MessageEditionComponent } from './message-edition/message-edition.component'
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { HistoryComponent } from './history/history.component'
     EventListCreateDialog,
     NavigatorComponent,
     MessagesComponent,
-    HistoryComponent
+    HistoryComponent,
+    MessageEditionComponent
   ],
   imports: [
     BrowserModule,
