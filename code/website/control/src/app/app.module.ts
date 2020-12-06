@@ -7,7 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatDialogModule, MatDialogContent, MatDialogActions} from "@angular/material/dialog"
 import { FormsModule } from '@angular/forms'
 import { RouterModule } from "@angular/router"
-
+import {EditorModule} from '@tinymce/tinymce-angular'
 
 import { AppComponent } from './app.component';
 import { TopBarComponent } from './top-bar/top-bar.component'
@@ -40,7 +40,8 @@ import { MessageEditionComponent } from './message-edition/message-edition.compo
     NoopAnimationsModule,
     FormsModule,
     RouteurRoutingModule,
-    RouterModule
+    RouterModule,
+    EditorModule
   ],
   providers: [],
   bootstrap: [AppComponent]

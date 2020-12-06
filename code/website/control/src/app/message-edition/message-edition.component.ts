@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { EditorComponent } from '@tinymce/tinymce-angular'
 
 @Component({
   selector: 'app-message-edition',
