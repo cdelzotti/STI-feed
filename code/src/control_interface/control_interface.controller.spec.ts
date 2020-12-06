@@ -98,12 +98,13 @@ describe('control', () => {
             });
             expect(responseAdd.error).toBe(false);
             // Add a message
-            let responseMsgAdd = await controlController.addMsg(new ObjectID(responseAdd._id), {
+            let responseMsgAdd = await controlController.addMsg({
                 dateDebut : "2020-11-30T00:00:00.000Z",
                 dateFin : "2020-12-30T00:00:00.000Z",
                 title : "Test message",
                 content : "PLOUF",
-                type : "TEST"
+                type : "TEST",
+                releatedEvent : responseAdd._id.toString()
             })
             expect(responseMsgAdd.error).toBe(false);
             // retreive a message
@@ -118,8 +119,15 @@ describe('control', () => {
             })
             expect(responseEditMsg.error).toBe(false);
             let responseGetMsgAfterEdit = await controlController.getMsg({
-                title : "EDITED TITLE"
+                _id : new ObjectID(responseMsgAdd._id)
             });
             expect(responseGetMsgAfterEdit[0].title).toBe("EDITED TITLE");
+            // Delete
+            let responseDelete = await controlController.deleteMessage(new ObjectID(responseMsgAdd._id));
+            expect(responseDelete.error).toBe(false);
+            let responseAfterDelete = await controlController.getMsg({
+                _id : new ObjectID(responseMsgAdd._id)
+            });
+            expect(responseAfterDelete).toEqual([]);
         })
 });

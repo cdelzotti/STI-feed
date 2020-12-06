@@ -1,5 +1,5 @@
 import { BadRequestException, InternalServerErrorException, NotFoundException ,Injectable, Post} from '@nestjs/common';
-import { Db, Repository, Equal, MoreThan} from 'typeorm';
+import { Repository} from 'typeorm';
 import { EventData } from '../data/data.entity'
 import { Messages } from './control_interface.entity'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -157,7 +157,7 @@ export class ControlInterfaceService {
     async getEventMessage(eventID : ObjectID) : Promise<Messages[]> {
         return this.messagesRepository.find({
                 where : {
-                    relatedEvent : eventID
+                    relatedEvent : eventID.toString()
                 },
                 order : {
                     dateDebut : "ASC"
@@ -219,5 +219,17 @@ export class ControlInterfaceService {
             status : "",
             error : false
         };
+    }
+
+    /**
+     * Check if the given ID exists in the event Database
+     * 
+     * @param id Event identifier that will be checked
+     */
+    async eventExist(id:ObjectID) : Promise<boolean>{
+        let eventSelection = await this.getEvents({
+            _id : id
+        })
+        return eventSelection.length > 0;
     }
 }

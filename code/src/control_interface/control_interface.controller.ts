@@ -104,7 +104,7 @@ export class ControlInterfaceController {
   }
 
   @Delete("msg/:id")
-  async deleteMessage(@Param(new ObjectIDPipe()) id){
+  async deleteMessage(@Param(new ObjectIDPipe()) id : ObjectID){
     return this.controlInterfaceService.deleteMessage(id)
   }
 
