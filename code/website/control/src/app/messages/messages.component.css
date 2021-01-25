@@ -9,3 +9,8 @@
 #messagesTable tbody tr:hover{
     background-color: lightgray;
 }
+
+#messageAddContainer{
+    margin-top: 2%;
+    margin-bottom: 1%;
+}

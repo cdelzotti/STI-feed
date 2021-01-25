@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-navigator',
@@ -7,7 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NavigatorComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private router: Router, 
+    private route: ActivatedRoute
+  ) {
+  }
 
   navClasses = [
     {
@@ -25,7 +30,16 @@ export class NavigatorComponent implements OnInit {
   ]
   
   ngOnInit(): void {
-    this.navClasses[0].class = "nav_selection"
+    this.router.events.subscribe( event =>{
+      let activePage : string = event["url"].split("/")[1];
+      if (activePage == "") {
+        this.navClasses[0].class = "nav_selection"; 
+      } else if (activePage == "messages"){
+        this.navClasses[1].class = "nav_selection";
+      } else {
+        this.navClasses[2].class = "nav_selection";
+      }
+    })
   }
 
 

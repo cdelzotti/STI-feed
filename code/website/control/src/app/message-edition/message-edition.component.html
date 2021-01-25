@@ -1,17 +1,44 @@
-<h1>Modifier un message</h1>
-<editor
-apiKey="67s7a0sxmytc9u2xbd2dxkwxoua2vfqjuyedl2c4afyhmsv1"
-[init]="{
-     height: 500,
-     menubar: true,
-     plugins: [
-       'advlist autolink lists link image charmap print preview anchor',
-       'searchreplace visualblocks code fullscreen',
-       'insertdatetime media table paste code help wordcount'
-     ],
-     toolbar:
-       'undo redo | formatselect | bold italic backcolor | \
-       alignleft aligncenter alignright alignjustify | \
-       bullist numlist outdent indent | removeformat | help'
-   }"
- ></editor>
+<h1>Édition d'un message</h1>
+
+<span id="warningMessage">{{ errorMessage }}</span>
+
+<div id="messageEditionFields">
+
+  <div id="headerFields">
+    <h2>Informations générales</h2>
+
+    <div id="headerFieldLeft">
+      <p><b>Titre</b> : <input [(ngModel)]="title"/></p>
+      <p><b>Période de publication du message : </b> du <input type="date" [(ngModel)]="dateDebut"/> au <input type="date" [(ngModel)]="dateFin"/></p>
+    </div>
+    <div id="headerFieldRight">
+      <p><b>Type</b> : <input [(ngModel)]="type" placeholder="Annonce"/></p>
+      <p><b>Publier tout de suite ? :</b> <input type="checkbox" [(ngModel)]="published"/></p>
+    </div>
+  </div>
+
+  <div id="messageContent">
+    <h2>Contenu du message</h2>
+    <editor [(ngModel)]="content"
+    [init]="{
+      height: 500,
+      menubar: true,
+      plugins: [
+        'advlist autolink lists link image charmap print preview anchor',
+        'searchreplace visualblocks code fullscreen',
+        'insertdatetime media table paste code help wordcount'
+      ],
+      toolbar:
+        'undo redo | formatselect | bold italic backcolor | \
+        alignleft aligncenter alignright alignjustify | \
+        bullist numlist outdent indent | removeformat | help'
+    }"
+    ></editor>
+  </div>
+
+  <div id="validate">
+    <a class="button fancy-button publishButton" id="messageAdd" (click)="addMessage()"><mat-icon>add</mat-icon>Créer message</a>
+  </div>
+
+
+</div>

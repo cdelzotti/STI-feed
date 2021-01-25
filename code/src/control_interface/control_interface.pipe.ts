@@ -205,7 +205,7 @@ export class MessagePipe implements PipeTransform {
   }
 
   transform(thingReceived: any, metadata: ArgumentMetadata) : ObjectID {
-    let allowedKeys : string[] = ["_id", "dateDebut", "dateFin", "title", "content", "type", "relatedEvent"]
+    let allowedKeys : string[] = ["_id", "dateDebut", "dateFin", "title", "content", "type", "relatedEvent", "published"]
     UsualFunctions.forceIDImportanceCompliance(thingReceived, this.idImportance);
     for (const key in thingReceived) {
       if ( !allowedKeys.includes(key)) {
@@ -223,6 +223,11 @@ export class MessagePipe implements PipeTransform {
           thingReceived[key] = UsualFunctions.tryToParseComparativeDate(thingReceived[key]);
         } else {
           thingReceived[key] = UsualFunctions.tryToParseDate(thingReceived[key])
+        }
+      }
+      if (key == "published") {
+        if (thingReceived[key] != true && thingReceived[key] != false) {
+          throw new BadRequestException("published must be a boolean value")
         }
       }
     }

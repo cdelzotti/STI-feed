@@ -20,7 +20,7 @@ const routes: Routes = [
     component : HistoryComponent,
   },
   {
-    path : "messages/message-edit",
+    path : "messages/message-edit/:id",
     component : MessageEditionComponent
   }
 ];
