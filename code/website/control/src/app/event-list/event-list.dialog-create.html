@@ -9,21 +9,10 @@
 
   <p><b>Du </b> <input type="date" [(ngModel)]="dateDebut"/> <b> au </b> <input type="date" [(ngModel)]="dateFin"/></p>
 
-  <p><b>Informations supplémentaires</b>
+  <p><b>Informations supplémentaires</b></p>
 
   <textarea class="large-input" [(ngModel)]="info" rows="10" cols="100" placeholder="Information uniquement accessible pour la gestion du site"></textarea>
 
-  <p><b>Message à afficher</b></p> 
-  
-  <textarea class="large-input" [(ngModel)]="message" rows="10" cols="100" placeholder="Un message à divulguer publiquement"></textarea>
-  
-  <br/>
-
-  <b>Image jointe :</b><input id="createEventFileInput" class="file-input" type="file" (change)="handleImage()">
-
-  <br/>
-
-  <b>Publier tout de suite ?</b> <input type="checkbox" [(ngModel)]="relevant"/>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button class="mat-dialog-button" mat-button mat-dialog-close>Annuler</button>

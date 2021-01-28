@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { response } from 'express';
 import { EventsService } from '../events.service'
 import { Message } from './message'
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'messages',
@@ -10,18 +11,30 @@ import { Message } from './message'
 })
 export class MessagesComponent implements OnInit {
 
-  constructor(private eventsServices : EventsService) {}
+  constructor(
+    private eventsServices : EventsService,
+    private router: Router, 
+    private route: ActivatedRoute) {}
 
   messages : Message[];
 
   ngOnInit(): void {
-    this.getMessages();
+    this.route.params.subscribe(param => {
+        this.getMessages(param.type);
+    });
   }
 
-  getMessages():void {
-    this.eventsServices.getMessages({}).subscribe((messages) => {
-      this.messages = messages;
-    })
+  getMessages(typeRequired : string):void {
+    this.messages = [];
+    if (typeRequired == "current") {
+      this.eventsServices.getIncomingMessage().subscribe((messages) => {
+        this.messages = messages;
+      })
+    } else {
+      this.eventsServices.getOldMessage().subscribe((messages) => {
+        this.messages = messages;
+      })
+    }
   }
 
   publish(id : string, publishState : boolean) : void{

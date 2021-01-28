@@ -4,6 +4,7 @@ import { Event } from './event'
 import { ControlResponse } from './controlResponse'
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { environment } from '../../environments/environment';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'event-list',
@@ -12,7 +13,11 @@ import { environment } from '../../environments/environment';
 })
 export class EventListComponent implements OnInit {
   
-  constructor (private eventService : EventsService, public dialog: MatDialog){}
+  constructor (
+    private eventService : EventsService, 
+    public dialog: MatDialog,
+    private router: Router, 
+    private route: ActivatedRoute){}
 
   events : Event[]
   controlResponse : ControlResponse
@@ -36,33 +41,11 @@ export class EventListComponent implements OnInit {
   }
 
   /**
-   * Publish/Unpublish an event
-   * 
-   * @param id : events identifier 
-   * @param relevance : Must it be pubished or not ?
-   */
-  editPublishing(id : string, relevance : boolean) : void{
-    // Retrieve event
-    let selectedEvent : Event = this.eventRetreiver(id);
-    // edit event
-    this.eventService.editEvent({
-      _id : id,
-      relevant : !selectedEvent.relevant
-    }).subscribe(
-      (controlResponse) => {
-        this.controlResponse = controlResponse;
-        this.ngOnInit();
-      }
-    );
-  }
-
-
-  /**
    * Show a dialog box allowing event edition
    * 
    * @param id Event identifier
    */
-  addMessage(id : string) : void {
+  edit(id : string) : void {
     // retrieve event details
     let event : Event = this.eventRetreiver(id);
 
@@ -95,6 +78,15 @@ export class EventListComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
           console.log(`Dialog result: ${result}`);
         });
+  }
+
+  addMessage(id : string): void {
+    // Create an empty event
+    this.eventService.postMessage({
+      relatedEvent : id
+    }).subscribe(response => {
+      this.router.navigate([`/messages/current/message-edit/${response._id}`], {relativeTo: this.route, skipLocationChange: true});
+    });
   }
 
   /** 
@@ -162,19 +154,8 @@ export class EventListEditDialog {
 
   submit() {
     this.eventService.editEvent({
-      _id : this.eventToEdit._id,
-      message : this.eventToEdit.message,
-      relevant : true
+      _id : this.eventToEdit._id
     }).subscribe((controlResponse) => {
-       // Upload image
-       if (this.image != undefined){
-        this.eventService.postImage(this.eventToEdit._id, this.image).subscribe((imgResponse) => {
-          console.log(imgResponse);
-          // Refresh the hosting component
-          this.fromPage.ngOnInit()
-        })
-      }
-
       // Refresh the hosting component
       this.fromPage.ngOnInit()
     })
@@ -240,17 +221,9 @@ export class EventListCreateDialog{
         impact : this.impact,
         info : this.info,
         source : this.source,
-        message : this.message,
         type : this.type
       }).subscribe(
         (controlResponse) => {
-          // Upload image
-          if (this.image != undefined){
-            this.eventService.postImage(controlResponse._id, this.image).subscribe((imgResponse) => {
-              console.log(imgResponse);
-              this.fromPage.ngOnInit();
-            })
-          }          
           // reload event list
           this.closingCallback();
         }

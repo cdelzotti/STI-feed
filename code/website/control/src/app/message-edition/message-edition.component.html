@@ -4,14 +4,25 @@
 
 <div id="messageEditionFields">
 
-  <div id="headerFields">
+  <div class="headerFields" *ngIf="event != undefined">
+    <h2>Évènement lié</h2>
+    <div class="headerFieldLeft">
+      <p><b>Lieu</b> : {{event.localisation}}</p>
+      <p><b>Période : </b> du {{event.dateDebut}} au {{event.dateFin}}</p>
+    </div>
+    <div class="headerFieldRight">
+      <p><b>Détails</b> : {{event.impact}}</p>
+    </div>
+  </div>
+
+  <div class="headerFields">
     <h2>Informations générales</h2>
 
-    <div id="headerFieldLeft">
+    <div class="headerFieldLeft">
       <p><b>Titre</b> : <input [(ngModel)]="title"/></p>
       <p><b>Période de publication du message : </b> du <input type="date" [(ngModel)]="dateDebut"/> au <input type="date" [(ngModel)]="dateFin"/></p>
     </div>
-    <div id="headerFieldRight">
+    <div class="headerFieldRight">
       <p><b>Type</b> : <input [(ngModel)]="type" placeholder="Annonce"/></p>
       <p><b>Publier tout de suite ? :</b> <input type="checkbox" [(ngModel)]="published"/></p>
     </div>

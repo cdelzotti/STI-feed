@@ -10,19 +10,6 @@
 
   <p><b>Source</b> : {{ eventToEdit.source }} | <b>Type</b> : {{ eventToEdit.type }}</p>
 
-  <p><b>Message à afficher</b></p> 
-  
-  <textarea class="large-input" [(ngModel)]="eventToEdit.message" rows="10" cols="100"></textarea>
-  
-  <br/>
-
-  <h4>Pièces jointes</h4>
-
-  <b>Fichier joint : </b><input  id="editEventFileInput" class="file-input" type="file" (change)="handleImage()">   <br/>
-  <span *ngIf="eventToEdit.attachedFile != '' && eventToEdit.attachedFile != undefined">
-    Un fichier existe déjà, il est disponible <a href="{{backUrl}}pictures/{{eventToEdit.attachedFile}}">ici</a>. En uploader un nouveau l'effacera.
-  </span><br/>
-
 
 </mat-dialog-content>
 <mat-dialog-actions align="end">

@@ -3,6 +3,7 @@ import { EditorComponent } from '@tinymce/tinymce-angular'
 import { response } from 'express';
 import { EventsService } from "../events.service"
 import { Router, ActivatedRoute } from '@angular/router';
+import { Event } from '../event-list/event'
 
 
 @Component({
@@ -28,12 +29,28 @@ export class MessageEditionComponent implements OnInit {
         }).subscribe(message =>{
           this.id = param.id;
           this.relatedEvent = message[0].relatedEvent;
-          this.dateDebut = message[0].dateDebut.split("T")[0];
-          this.dateFin = message[0].dateFin.split("T")[0];
+          if (message[0].dateDebut != undefined) {
+            this.dateDebut = message[0].dateDebut.split("T")[0];            
+          } else {
+            this.dateDebut = undefined;
+          }
+          if (message[0].dateFin != undefined) {
+            this.dateFin = message[0].dateFin.split("T")[0];            
+          } else {
+            this.dateFin = undefined;
+          }
           this.published = message[0].published;
           this.title = message[0].title;
           this.type = message[0].type;
           this.content = message[0].content;
+          // Retrieve related event infos
+          if (this.relatedEvent != undefined) {
+            this.eventService.getSpecificEvents({
+              _id : this.relatedEvent
+            }).subscribe(relatedEvent => {
+              this.event = relatedEvent[0];
+            })
+          }
         });
       // If this is a creation
       } else {
@@ -45,6 +62,7 @@ export class MessageEditionComponent implements OnInit {
   newMessage : boolean;
   id : string;
   relatedEvent : string;
+  event : Event;
   dateDebut : string;
   dateFin : string;
   title : string;
@@ -75,6 +93,10 @@ export class MessageEditionComponent implements OnInit {
       if (this.type == undefined) {
         this.type = "Annonce"
       }
+      // Define return page
+      let returnPage : string;
+      let dateGiven : string[] = this.dateFin.split("-");
+      let currentDate : Date = new Date();
       // If it's a new message, post it
       if (this.newMessage) {
         this.eventService.postMessage({
@@ -88,7 +110,7 @@ export class MessageEditionComponent implements OnInit {
           if (response.error) {
             this.errorMessage = response.status;
           } else {
-            this.router.navigate(["../"], {relativeTo: this.route, skipLocationChange: true});
+            this.router.navigate([`/messages/current`], {relativeTo: this.route, skipLocationChange: true});
           }
         })
     } else {
@@ -105,11 +127,28 @@ export class MessageEditionComponent implements OnInit {
           if (response.error) {
             this.errorMessage = response.status;
           } else {
-            this.router.navigate(["/messages", "/current"], {relativeTo: this.route, skipLocationChange: true});
+            this.router.navigate(["/messages/current"], {relativeTo: this.route, skipLocationChange: true});
           }
         });
     }
   }
   }
 
+
+  /**
+   * returns true if date1 > date 2
+   * 
+   * @param date1 [month, day, year]
+   * @param date2 [month, day, year]
+   */
+  compDate(date1 : [number, number, number], date2 :[number, number, number]) : boolean{
+    if (date2[2] > date1[2]) {
+      return false;
+    } else if (date2[0] > date1[0]) {
+      return false;
+    } else if (date2[1] > date1[1]) {
+      return false;
+    }
+    return false;
+  }
 }
