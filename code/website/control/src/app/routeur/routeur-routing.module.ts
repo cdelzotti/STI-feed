@@ -12,7 +12,7 @@ const routes: Routes = [
     component : EventListComponent,
   },
   {
-    path : "messages",
+    path : "messages/:type",
     component : MessagesComponent,
   },
   {
@@ -20,7 +20,7 @@ const routes: Routes = [
     component : HistoryComponent,
   },
   {
-    path : "messages/message-edit/:id",
+    path : "messages/:type/message-edit/:id",
     component : MessageEditionComponent
   }
 ];

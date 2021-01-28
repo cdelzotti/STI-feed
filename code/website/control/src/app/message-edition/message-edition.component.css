@@ -1,3 +1,7 @@
+h1 {
+    text-align: center;
+}
+
 #validate{
     margin-top: 2%;
 }
@@ -25,4 +29,9 @@
 
 #warningMessage {
     color: red;
+}
+
+#messageContent{
+    margin-right: 5%;
+    margin-left: 5%;
 }
