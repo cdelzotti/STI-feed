@@ -7,7 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatDialogModule, MatDialogContent, MatDialogActions} from "@angular/material/dialog"
 import { FormsModule } from '@angular/forms'
 import { RouterModule } from "@angular/router"
-
+import {EditorModule} from '@tinymce/tinymce-angular'
 
 import { AppComponent } from './app.component';
 import { TopBarComponent } from './top-bar/top-bar.component'
@@ -15,7 +15,8 @@ import { EventListComponent, EventListEditDialog, EventListCreateDialog } from '
 import { NavigatorComponent } from './navigator/navigator.component'
 import { MessagesComponent } from './messages/messages.component';
 import { RouteurRoutingModule} from './routeur/routeur-routing.module';
-import { HistoryComponent } from './history/history.component'
+import { HistoryComponent } from './history/history.component';
+import { MessageEditionComponent } from './message-edition/message-edition.component'
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { HistoryComponent } from './history/history.component'
     EventListCreateDialog,
     NavigatorComponent,
     MessagesComponent,
-    HistoryComponent
+    HistoryComponent,
+    MessageEditionComponent
   ],
   imports: [
     BrowserModule,
@@ -38,7 +40,8 @@ import { HistoryComponent } from './history/history.component'
     NoopAnimationsModule,
     FormsModule,
     RouteurRoutingModule,
-    RouterModule
+    RouterModule,
+    EditorModule
   ],
   providers: [],
   bootstrap: [AppComponent]

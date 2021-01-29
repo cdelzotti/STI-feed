@@ -1,21 +1,38 @@
 import { Entity, Column, ObjectID, ObjectIdColumn, ManyToOne, Unique} from 'typeorm';
-import { IsString, IsInt, IsBoolean, IsDate } from 'class-validator';
+import { IsString, IsInt, IsBoolean, IsDate, isBoolean } from 'class-validator';
 import { EventData } from '../data/data.entity'
 
-@Entity("EventLinks")
-export class EventLinks{
+@Entity("Messages")
+export class Messages{
     @IsString()
     @ObjectIdColumn()
     _id? : ObjectID;
 
+    @Column({ nullable: true })
+    @IsDate()
+    dateDebut? : Date;
+
+    @Column({ nullable: true })
+    @IsDate()
+    dateFin? : Date;
+
     @IsString()
     @Column()
-    name? : string;
+    title? : string;
 
     @Column()
     @IsString()
-    link? : string;
+    content? : string;
+
+    @Column()
+    @IsString()
+    type? : string;
+
+    @Column()
+    @IsBoolean()
+    published : boolean;
     
-    @ManyToOne(() => EventData, relatedEvent => relatedEvent.links)
-    relatedEvent : EventData;
+    @Column()
+    @IsString()
+    relatedEvent? : string;
 }

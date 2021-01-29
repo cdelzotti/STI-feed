@@ -1,6 +1,87 @@
 import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
 import { ObjectID } from 'mongodb'
 
+class UsualFunctions{
+
+
+  static convertID(id : string){
+    try {
+      return new ObjectID(id);
+    } catch (error) {
+      throw new BadRequestException(`${id} is not a valid ID`)
+    }
+  }
+
+  static forceIDImportanceCompliance(thing, idImportance : Number){
+    // Checks id
+    if (thing["_id"] != undefined && idImportance == 0) {
+      throw new BadRequestException("_id cannot be provided for this request")
+    }
+    if (thing["_id"] == undefined && idImportance == 2) {
+      throw new BadRequestException("_id must be provided for this request")
+    }
+  }
+
+    /**
+   * Try to parse `thingReceived[key]` into a date object. Returns a BadRequestException
+   * if it can't.
+   * 
+   * @param date a string representing an ISO-formated date.
+   * @returns a Date objet, or throws an error.
+   */
+  static tryToParseDate(date : string) : Date {
+    try {
+      return new Date(date)
+    } catch (error) {
+      throw new BadRequestException(`Could not parse ${date}, is it a well formed ISO string date?`)
+    }
+  }
+
+  /**
+   * Try to parse dates from thingReceived in
+   * a comparative manner
+   * 
+   * @param thingReceived
+   * @returns edits thingReceived dateDebut and dateFin keys, or throw BadRequest error
+   * if parsing failed 
+   */
+  static tryToParseComparativeDate(dateField : Array<string>){
+    try {
+      let quantificator : string;
+      let date : Date;
+      // Check structure
+      for (let field in dateField) {
+        // Check quantificator
+        if (field == '0') {
+          // The first item must be 'more' or 'less'
+          let comparativeType : Array<string> = ["more", "less"];
+          if (!comparativeType.includes(dateField[field])){
+            throw new BadRequestException(`${dateField[field]} is not valid date quantificator`);
+          }
+          quantificator = dateField[field];
+        // Check date
+        } else if (field == '1') {
+          date = this.tryToParseDate(dateField[field])
+        } else {
+          throw new BadRequestException("Something is wrong with your dates's array length")
+        }
+      }
+      // return structure
+      if (quantificator == "more") {
+        return {
+          $gte : date
+        };
+      } else {
+        return {
+          $lte : date
+        }
+      }
+    } catch {
+      throw new BadRequestException("Something is wrong with your dates");
+    }
+  }
+}
+
 class EventChecker{
   allowedKey : string[] = [
     "_id",
@@ -23,44 +104,21 @@ class EventChecker{
    * @param idImportance Tells how important `_id` is, {0 : Cannot be provided, 1 : can be provided, 2 : must be provided}
    */
   checkEvent(thingReceived, dateComparative : boolean, idImportance : Number){
-    // Checks id
-    if (thingReceived["_id"] != undefined && idImportance == 0) {
-      throw new BadRequestException("_id cannot be provided for this request")
-    }
-    if (thingReceived["_id"] == undefined && idImportance == 2) {
-      throw new BadRequestException("_id must be provided for this request")
-    }
-    // Checks dates
-    if (dateComparative) {
-      this.tryToParseComparativeDate(thingReceived);
-    } else {
-      if (thingReceived.dateDebut != undefined) {
-        thingReceived.dateDebut = this.tryToParseDate(thingReceived["dateDebut"])
-      } 
-      if (thingReceived.dateFin != undefined) {
-        thingReceived.dateFin = this.tryToParseDate(thingReceived["dateFin"])
-      } 
-    }
+    // Check IDs
+    UsualFunctions.forceIDImportanceCompliance(thingReceived, idImportance);
     // Check ID and relevant
     for (const key in thingReceived) {
       if (this.allowedKey.includes(key)) {
-        switch (key) {
-          case "_id": {
-            try {
-              thingReceived._id = new ObjectID(thingReceived._id) 
-            } catch (error) {
-              throw new BadRequestException("Could not parse ID.")
+        if (key == "_id") {
+          thingReceived["_id"] = UsualFunctions.convertID(thingReceived["_id"]);
+        }
+        // Check dates
+        if (key == "dateDebut" || key == "dateFin") {
+            if (dateComparative){
+              thingReceived[key] = UsualFunctions.tryToParseComparativeDate(thingReceived[key])
+            } else {
+              thingReceived[key] = UsualFunctions.tryToParseDate(thingReceived[key])
             }
-            break;
-          }
-          case "relevant" : {
-            if (thingReceived.relevant != true && thingReceived.relevant != false) {
-              throw new BadRequestException("Relevant must be a boolean value.")
-            }
-            break;
-          }
-          default:
-            break;
         }
       } else {
         throw new BadRequestException(`${key} is not a valid key`)
@@ -68,56 +126,7 @@ class EventChecker{
     }
     return thingReceived;
   }
-
-  /**
-   * Try to parse `thingReceived[key]` into a date object. Returns a BadRequestException
-   * if it can't.
-   * 
-   * @param date a string representing an ISO-formated date.
-   * @returns a Date objet, or throws an error.
-   */
-  tryToParseDate(date : string) : Date {
-    try {
-      return new Date(date)
-    } catch (error) {
-      throw new BadRequestException(`Could not parse ${date}, is it a well formed ISO string date?`)
-    }
-  }
-
-  /**
-   * Try to parse dates from thingReceived in
-   * a comparative manner
-   * 
-   * @param thingReceived
-   * @returns edits thingReceived dateDebut and dateFin keys, or throw BadRequest error
-   * if parsing failed 
-   */
-  tryToParseComparativeDate(thingReceived){
-    let keys : string[] = ["dateDebut", "dateFin"]
-    try {
-      for (const key in keys) {
-        let dateKey : string = keys[key]
-        if (thingReceived[dateKey] != undefined){
-          let date : Date = new Date(thingReceived[dateKey][1])
-          // Checks if ISO string is valid
-          if (Number.isNaN(date.getTime())) {
-            throw new BadRequestException(`${dateKey} isn't a valid ISO string`)
-          }
-          if (thingReceived[dateKey][0] == "more"){
-            thingReceived[dateKey] = {$gte: date};
-          } else if (thingReceived[dateKey][0] == "less") {
-            thingReceived[dateKey] = {$lte: date};
-          } else {
-            throw new BadRequestException(`${keys[key]} doesn't start neither with more nor less. Is it really a list ?`)
-          }
-        } 
-      }
-    } catch (error) {
-     throw new BadRequestException("Something isn't right in your date formats") 
-    }
-  }
 }
-
 
 @Injectable()
 /**
@@ -169,39 +178,58 @@ export class NormalEventPipe implements PipeTransform {
 export class ObjectIDPipe implements PipeTransform {
 
   transform(thingReceived: any, metadata: ArgumentMetadata) : ObjectID {
-    try {
-      thingReceived = new ObjectID(thingReceived.id);
-    } catch (error) {
-      throw new BadRequestException(`Could not parse ${thingReceived.id} into a mongodb ObjectID`)
-    }
-    return thingReceived;
+    return UsualFunctions.convertID(thingReceived.id);
   }
 }
 
 @Injectable()
 /**
- * Ensures that the given input is a valid link representation
+ * Ensures that the given input is a valid Messages representation
  * 
- * A valid link representation is a list of links containing dictionaries
- * with only `name` and `link` as keys.
+ * 
  */
-export class LinkListPipe implements PipeTransform {
+export class MessagePipe implements PipeTransform {
+
+  idImportance : number;
+  dateComparison: boolean;
+
+  /**
+   * Builds a pipe for messages
+   * 
+   * @param idImportance An integer that tells how important the id is (0 = forbidden, 1 = allowed, 2 = required)
+   * @param dateComparison Tells if date must be in comparative form
+   */
+  constructor(idImportance : number, dateComparison : boolean){
+    this.dateComparison = dateComparison;
+    this.idImportance = idImportance;
+  }
 
   transform(thingReceived: any, metadata: ArgumentMetadata) : ObjectID {
-    let allowedKeys : string[] = ["name", "link"]
-    let hasKeys : boolean = false;
-    
-      for (const link in thingReceived) {
-        for (const key in thingReceived[link]) {
-          if (!allowedKeys.includes(key)){
-            throw new BadRequestException(`${key} key isn't allowed`)
-          }
-          hasKeys = true
+    let allowedKeys : string[] = ["_id", "dateDebut", "dateFin", "title", "content", "type", "relatedEvent", "published"]
+    UsualFunctions.forceIDImportanceCompliance(thingReceived, this.idImportance);
+    for (const key in thingReceived) {
+      if ( !allowedKeys.includes(key)) {
+        throw new BadRequestException(`${key} is not a valid key`)
+      }
+      if (key == "_id") {
+        thingReceived[key] = UsualFunctions.convertID(thingReceived[key]);
+      }
+      if (key == "relatedEvent") {
+        // Just check it, no convertion
+        UsualFunctions.convertID(thingReceived[key])
+      }
+      if (key == "dateDebut" || key == "dateFin"){
+        if (this.dateComparison) {
+          thingReceived[key] = UsualFunctions.tryToParseComparativeDate(thingReceived[key]);
+        } else {
+          thingReceived[key] = UsualFunctions.tryToParseDate(thingReceived[key])
         }
       }
-    
-    if (!hasKeys) {
-      throw new BadRequestException("Couldn't find any keys, is it really a dict ?")
+      if (key == "published") {
+        if (thingReceived[key] != true && thingReceived[key] != false) {
+          throw new BadRequestException("published must be a boolean value")
+        }
+      }
     }
     return thingReceived;
   }

@@ -4,13 +4,14 @@ import { EventData } from '../data/data.entity'
 import { ControlResponse } from './control_interface.dto'
 import * as assert from 'assert'
 import { Response } from 'express'
-import { EventWithCompDatePipe, EventWithIDPipe, EventWithoutIDPipe, NormalEventPipe, ObjectIDPipe, LinkListPipe} from "./control_interface.pipe"
+import { EventWithCompDatePipe, EventWithIDPipe, EventWithoutIDPipe, NormalEventPipe, ObjectIDPipe, MessagePipe} from "./control_interface.pipe"
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer'
 import { handleFileName } from '../utils/upload-file.utils'
 import { identity } from 'rxjs/internal/util/identity';
 import { ObjectID } from 'mongodb';
 import { get } from 'http';
+import { Messages } from './control_interface.entity';
 
 @Controller("control/")
 export class ControlInterfaceController {
@@ -91,19 +92,30 @@ export class ControlInterfaceController {
   async removeAttached(@Param(new ObjectIDPipe()) id : ObjectID) : Promise<ControlResponse>{
     return this.controlInterfaceService.registerAttached(id, "")
   }
-
-  @Post("link/:id")
-  async addLink(@Param(new ObjectIDPipe()) eventID, @Body(new LinkListPipe()) links) : Promise<ControlResponse>{
-    return this.controlInterfaceService.addLink(eventID, links);
+  
+  @Post("getMsg/")
+  async getMsg(@Body(new MessagePipe(1, true)) msg){
+    return this.controlInterfaceService.getMessages(msg);
   }
 
-  @Get("link/:id")
-  async getLinks(@Param(new ObjectIDPipe()) eventID){
-    return this.controlInterfaceService.getLinks(eventID);
+  @Post("msg/")
+  async addMsg(@Body(new MessagePipe(0, false)) msg) : Promise<ControlResponse>{
+    return this.controlInterfaceService.addMessage(msg);
   }
 
-  @Delete("link/:id")
-  async deleteLink(@Param(new ObjectIDPipe()) id){
-    return this.controlInterfaceService.deleteLinks(id)
+  @Delete("msg/:id")
+  async deleteMessage(@Param(new ObjectIDPipe()) id : ObjectID){
+    return this.controlInterfaceService.deleteMessage(id)
+  }
+
+  @Put("msg/")
+  async editMessage(@Body(new MessagePipe(2, false)) msg) : Promise<ControlResponse>{
+    return this.controlInterfaceService.editMessage(msg);
+  }
+
+
+  @Get("eventmsg/:id")
+  async getEventMessages(@Param(new ObjectIDPipe()) eventID){
+    return this.controlInterfaceService.getEventMessage(eventID);
   }
 }

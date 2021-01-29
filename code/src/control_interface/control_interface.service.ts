@@ -1,7 +1,7 @@
-import { BadRequestException, Injectable, Post} from '@nestjs/common';
-import { Db, Repository, Equal, MoreThan} from 'typeorm';
+import { BadRequestException, InternalServerErrorException, NotFoundException ,Injectable, Post} from '@nestjs/common';
+import { Repository} from 'typeorm';
 import { EventData } from '../data/data.entity'
-import { EventLinks } from './control_interface.entity'
+import { Messages } from './control_interface.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ControlResponse } from './control_interface.dto'
 import { ObjectID } from 'mongodb'
@@ -14,8 +14,8 @@ export class ControlInterfaceService {
         // Create variable needed to access database
         @InjectRepository(EventData)
         private eventRepository : Repository<EventData>,
-        @InjectRepository(EventLinks)
-        private linksRepository : Repository<EventLinks>
+        @InjectRepository(Messages)
+        private messagesRepository : Repository<Messages>
     ){}
 
     /**
@@ -35,13 +35,13 @@ export class ControlInterfaceService {
      * 
      * @param eventID : an event's identifier
      * @param event : The new structure of event you want
-     * @requires eventID must match in DN
+     * @requires eventID must match in DB
      * @returns ControlResponse
      */
     async editEvent(eventID: ObjectID, event) : Promise<ControlResponse>{
         let eventFromDB : EventData = await this.eventRepository.findOne(eventID);
         if (eventFromDB == undefined) {
-            throw new BadRequestException("Couldn't find an event with that ID")
+            throw new NotFoundException("Couldn't find an event with that ID")
         }
         await this.eventRepository.save(event).catch( (e) => {
             throw new BadRequestException({
@@ -126,58 +126,77 @@ export class ControlInterfaceService {
 
 
     /**
-     * Add links to the DB
+     * Add a message into the db
      * 
-     * @param eventID The ID the new link must be related to
-     * @param links A list of links (dict with name & link keys)
+     * @param eventID Event identifier
+     * @param message Message that should be added to the DB
      */
-    async addLink(eventID : ObjectID, links) : Promise<ControlResponse> {
-        for (let index = 0; index < links.length; index++) {
-            await this.linksRepository.insert({
-                name : links[index].name,
-                link : links[index].link,
-                relatedEvent : eventID
-            }).catch((e => {
-                throw new BadRequestException(
-                {
-                    status : `${e}`,
-                    error : true
-                });
-            }));
+    async addMessage(message : Messages) : Promise<ControlResponse> {
+        // If an event is specified, it must exist
+        if (message.relatedEvent != undefined) {
+            if ( !await this.eventExist(new ObjectID(message.relatedEvent))) {
+                throw new BadRequestException(`${message.relatedEvent} n'est associé à aucun évènement`)
+            }
         }
+
+        if (message.published == undefined) {
+            message.published = false;
+        }
+        await this.messagesRepository.insert(message).catch((e => {
+            // Case in wich the adding failed
+            // Probably a connection problem with the DB
+            throw new InternalServerErrorException(
+            {
+                status : `${e}`,
+                error : true
+            });
+        }));
         return {
+            _id : message._id.toString(),
             status : "",
             error : false
         };
     }
 
     /**
-     * Get every links related to a given event
+     * Get every messages related to a given event
      * 
      * @param eventID The ID of an event
      * @returns Every links related to `eventID`
      */
-    async getLinks(eventID : ObjectID) : Promise<EventLinks[]> {
-        return this.linksRepository.find({
+    async getEventMessage(eventID : ObjectID) : Promise<Messages[]> {
+        return this.messagesRepository.find({
                 where : {
-                    relatedEvent : eventID
+                    relatedEvent : eventID.toString()
                 },
                 order : {
-                    name : "ASC"
+                    dateDebut : "ASC"
                 }
             });
     }
 
     /**
-     * Delete a link
-     * 
-     * @param id the ID of the link you want to delete
+     * @returns Every messages matching body description
      */
-    async deleteLinks(id : ObjectID) : Promise<ControlResponse>{
-        await this.linksRepository.delete({
+    async getMessages(body) : Promise<Messages[]> {
+        return this.messagesRepository.find({
+                where : body,
+                order : {
+                    dateDebut : "ASC"
+                }
+            });
+    }
+
+    /**
+     * Delete a Message
+     * 
+     * @param id the ID of the message you want to delete
+     */
+    async deleteMessage(id : ObjectID) : Promise<ControlResponse>{
+        await this.messagesRepository.delete({
             _id : id
         }).catch( (e) => {
-            throw new BadRequestException({
+            throw new InternalServerErrorException({
                 status : `${e}`,
                 error : true
             });
@@ -186,5 +205,41 @@ export class ControlInterfaceService {
             status : '',
             error : false
         }
+    }
+
+    /**Update a message
+     * 
+     * @param msg The message updated structure
+     * 
+     * @requires msg must contains an _id
+     */
+    async editMessage(msg : Messages) : Promise<ControlResponse>{
+        let msgFromDB : Messages = await this.messagesRepository.findOne(msg._id);
+        if (msgFromDB == undefined) {
+            throw new NotFoundException("Couldn't find a message with that ID");
+        }
+        await this.messagesRepository.save(msg).catch( (e) => {
+            throw new BadRequestException({
+                status : `${e}`,
+                error : true
+            });
+        });
+        return {
+            _id : msg._id.toString(),
+            status : "",
+            error : false
+        };
+    }
+
+    /**
+     * Check if the given ID exists in the event Database
+     * 
+     * @param id Event identifier that will be checked
+     */
+    async eventExist(id:ObjectID) : Promise<boolean>{
+        let eventSelection = await this.getEvents({
+            _id : id
+        })
+        return eventSelection.length > 0;
     }
 }

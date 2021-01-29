@@ -10,8 +10,8 @@
         <td>Fin</td>
         <td>Source</td>
         <td>Type</td>
-        <td>Message</td>
-        <td>Publier</td>
+        <td>Editer</td>
+        <td>Créer message</td>
     </thead>
     <tr *ngFor="let event of events">
         <td>{{ event["localisation"] }}</td>
@@ -20,8 +20,7 @@
         <td>{{ beautifulDate(event["dateFin"]) }}</td>
         <td>{{ event["source"] }}</td>
         <td>{{ event["type"] }}</td>
-        <td><a class="button fancy-button publishButton" (click)="addMessage(event['_id'])"><mat-icon>edit</mat-icon></a></td>
-        <td *ngIf="!event['relevant']"><a class="button fancy-button publishButton" (click)="editPublishing(event['_id'], true)"><mat-icon>email</mat-icon> Publier</a></td>
-        <td *ngIf="event['relevant']"><a class="button fancy-button unpublishButton" (click)="editPublishing(event['_id'], false)"><mat-icon>cancel</mat-icon> Annuler</a></td>
+        <td><a class="button fancy-button publishButton" (click)="edit(event['_id'])"><mat-icon>edit</mat-icon></a></td>
+        <td><a class="button fancy-button publishButton" (click)="addMessage(event['_id'])"><mat-icon>mail</mat-icon></a></td>
     </tr>
 </table>

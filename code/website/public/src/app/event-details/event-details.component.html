@@ -16,12 +16,4 @@
             <p id="description_text" *ngFor="let para of formattedMessage">{{ para }}</p>
         </article>
     </div>
-    <div class="links_container"*ngIf="links != undefined">
-        <h2>Voir aussi</h2>
-        <ul *ngIf="links.length > 0">
-            <li *ngFor="let link of links">
-                <b><a href="{{ link.link }}">{{link.name}}</a></b>
-            </li>
-        </ul>
-    </div>
 </div>

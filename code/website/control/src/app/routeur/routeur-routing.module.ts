@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { EventListComponent } from '../event-list/event-list.component'
 import { MessagesComponent } from '../messages/messages.component'
 import { HistoryComponent } from '../history/history.component'
+import { MessageEditionComponent } from '../message-edition/message-edition.component'
 
 const routes: Routes = [
   {
@@ -11,12 +12,12 @@ const routes: Routes = [
     component : EventListComponent,
   },
   {
-    path : "messages",
+    path : "messages/:type",
     component : MessagesComponent,
   },
   {
-    path: "history",
-    component : HistoryComponent,
+    path : "messages/:type/message-edit/:id",
+    component : MessageEditionComponent
   }
 ];
 
