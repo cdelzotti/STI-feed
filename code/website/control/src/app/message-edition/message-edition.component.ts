@@ -110,7 +110,7 @@ export class MessageEditionComponent implements OnInit {
           if (response.error) {
             this.errorMessage = response.status;
           } else {
-            this.router.navigate([`/messages/current`], {relativeTo: this.route, skipLocationChange: true});
+            this.router.navigateByUrl("/messages/current");
           }
         })
     } else {
@@ -127,7 +127,7 @@ export class MessageEditionComponent implements OnInit {
           if (response.error) {
             this.errorMessage = response.status;
           } else {
-            this.router.navigate(["/messages/current"], {relativeTo: this.route, skipLocationChange: true});
+            this.router.navigateByUrl("/messages/current");
           }
         });
     }
