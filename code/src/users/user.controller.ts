@@ -1,18 +1,29 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { User } from './user.dto'
+import { Body, Controller, Get, Post, Put, Delete } from '@nestjs/common';
+import { UsersService } from './users.service'
+
 
 @Controller("user/")
 export class UserController {
 
-  // constructor(private readonly appService: AppService) {}
+  constructor(private userService: UsersService) {}
 
   @Get()
-  getHello(): string {
-    return "This shoud be the logging route";
+  async getUsers() {
+    return this.userService.getUser() 
   }
 
   @Post()
-  postResponse(@Body() user  : User ): string{
-    return `Hi ${user.id}, you're password is ${user.pwd}`;
+  async addUser(@Body() user) {
+    return this.userService.createUser(user);
+  }
+
+  @Put()
+  async editUser(@Body() user){
+    return this.userService.editUser(user);
+  }
+
+  @Delete()
+  async deleteUser(@Body() user){
+    return this.userService.deleteUser(user);
   }
 }
