@@ -6,6 +6,7 @@ import { environment } from '../environments/environment'
 
 import { Event } from './event-list/event'
 import { ControlResponse } from './event-list/controlResponse'
+import { Message } from './messages/message'
 
 let httpOpt = {
   headers : new HttpHeaders({
@@ -34,6 +35,11 @@ export class EventsService{
       return this.http.post<Event[]>(eventUrl, body)
     }
 
+    getSpecificEvents(body) {
+      let eventUrl : string = `${environment.baseUrl}control/select-event/`;
+      return this.http.post<Event[]>(eventUrl, body);
+    }
+
     /**
      * Edit an event
      * 
@@ -56,27 +62,49 @@ export class EventsService{
       return this.http.post<ControlResponse>(eventUrl, body)
     }
 
-    postImage(id : string, image){
-      // TODO assert image
-      let url : string = `${environment.baseUrl}control/picture/${id}`
-      let formData = new FormData();
-      formData.append("file", image, image.name)
-      return this.http.post<ControlResponse>(url, formData);
+    postMessage(body) {
+      // TODO assert body
+      let url : string = `${environment.baseUrl}control/msg/`
+      return this.http.post<ControlResponse>(url, body)
     }
 
-    postLinks(eventID : string, links) {
-      // TODO assert links
-      let url : string = `${environment.baseUrl}control/link/${eventID}`
-      return this.http.post<ControlResponse>(url, links)
+    getMessages(body) {
+      // TODO assert body
+      let url : string = `${environment.baseUrl}control/getMsg/`
+      return this.http.post<Message[]>(url, body)
     }
 
-    getLinks(eventID : string) {
-      let url : string = `${environment.baseUrl}control/link/${eventID}`
-      return this.http.get<ControlResponse>(url)
+    getIncomingMessage(){
+      // TODO : Assert stuff
+      let hourLessDay : Date = new Date()
+      hourLessDay.setHours(0,0,0,0)
+      let body = {
+        dateFin : ["more", hourLessDay.toISOString()]
+      }
+      let url : string = `${environment.baseUrl}control/getMsg/`
+      return this.http.post<Message[]>(url, body)
     }
 
-    deleteLinks(eventID : string){
-      let url : string = `${environment.baseUrl}control/link/${eventID}`
+    getOldMessage(){
+      // TODO : Assert stuff
+      let hourLessDay : Date = new Date()
+      hourLessDay.setHours(0,0,0,0)
+      let body = {
+        dateFin : ["less", hourLessDay.toISOString()]
+      }
+      let url : string = `${environment.baseUrl}control/getMsg/`
+      return this.http.post<Message[]>(url, body)
+    }
+
+    updateMesssage(body) {
+      // TODO assert body
+      let url : string = `${environment.baseUrl}control/msg/`
+      return this.http.put<ControlResponse>(url, body)
+    }
+
+    deleteMessage(messageID : string){
+      // TODO assert body
+      let url : string = `${environment.baseUrl}control/msg/${messageID}`
       return this.http.delete<ControlResponse>(url)
     }
 }

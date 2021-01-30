@@ -4,7 +4,7 @@ import { Event } from './event'
 import { ControlResponse } from './controlResponse'
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { environment } from '../../environments/environment';
-import { link } from '@hapi/joi';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'event-list',
@@ -13,7 +13,11 @@ import { link } from '@hapi/joi';
 })
 export class EventListComponent implements OnInit {
   
-  constructor (private eventService : EventsService, public dialog: MatDialog){}
+  constructor (
+    private eventService : EventsService, 
+    public dialog: MatDialog,
+    private router: Router, 
+    private route: ActivatedRoute){}
 
   events : Event[]
   controlResponse : ControlResponse
@@ -37,33 +41,11 @@ export class EventListComponent implements OnInit {
   }
 
   /**
-   * Publish/Unpublish an event
-   * 
-   * @param id : events identifier 
-   * @param relevance : Must it be pubished or not ?
-   */
-  editPublishing(id : string, relevance : boolean) : void{
-    // Retrieve event
-    let selectedEvent : Event = this.eventRetreiver(id);
-    // edit event
-    this.eventService.editEvent({
-      _id : id,
-      relevant : !selectedEvent.relevant
-    }).subscribe(
-      (controlResponse) => {
-        this.controlResponse = controlResponse;
-        this.ngOnInit();
-      }
-    );
-  }
-
-
-  /**
    * Show a dialog box allowing event edition
    * 
    * @param id Event identifier
    */
-  addMessage(id : string) : void {
+  edit(id : string) : void {
     // retrieve event details
     let event : Event = this.eventRetreiver(id);
 
@@ -96,6 +78,15 @@ export class EventListComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
           console.log(`Dialog result: ${result}`);
         });
+  }
+
+  addMessage(id : string): void {
+    // Create an empty event
+    this.eventService.postMessage({
+      relatedEvent : id
+    }).subscribe(response => {
+      this.router.navigate([`/messages/current/message-edit/${response._id}`], {relativeTo: this.route, skipLocationChange: true});
+    });
   }
 
   /** 
@@ -155,80 +146,19 @@ export class EventListEditDialog {
     this.eventToEdit = data.eventEdit;
     this.fromPage = data.fromPage;
     this.backUrl = environment.baseUrl;
-    this.links = [];
-    this.eventService.getLinks(this.eventToEdit._id).subscribe((response)=>{
-      this.links = response;
-      let newThresold : number = this.links.length;
-      let index : number = 0;
-      while (index < 5) {
-        if (index < newThresold) {
-          this.links[index]["new"] = false;
-        } else {
-          this.links.push({
-            name : "",
-            link : "",
-            new : true,
-          });
-        }
-        index++;
-      }
-    });
   }
 
   handleImage(){
     this.image = (<HTMLInputElement>document.getElementById("editEventFileInput")).files[0]; 
   }
 
-  handleLinkDelete(eventID){
-
-    this.eventService.deleteLinks(eventID).subscribe((controlResponse)=>{
-      for (let i = 0; i < this.links.length; i++) {
-          if (this.links[i]._id == eventID){
-            this.links[i]._id = undefined;
-            this.links[i].name = "";
-            this.links[i].link = "";
-            this.links[i].new = true;
-          }
-      }
-    });
-  }
-
   submit() {
-    let linksToSend : Array<any> = this.checkLinks();
     this.eventService.editEvent({
-      _id : this.eventToEdit._id,
-      message : this.eventToEdit.message,
-      relevant : true
+      _id : this.eventToEdit._id
     }).subscribe((controlResponse) => {
-       // Upload image
-       if (this.image != undefined){
-        this.eventService.postImage(this.eventToEdit._id, this.image).subscribe((imgResponse) => {
-          console.log(imgResponse);
-          // Refresh the hosting component
-          this.fromPage.ngOnInit()
-        })
-      }
-
-      if (linksToSend.length > 0) {
-        this.eventService.postLinks(this.eventToEdit._id, linksToSend).subscribe();
-      }
-
       // Refresh the hosting component
       this.fromPage.ngOnInit()
     })
-  }
-
-  checkLinks() : Array<any>{
-    let validNewLinks : Array<any> = [];
-    for (let index = 0; index < this.links.length; index++) {
-      if (this.links[index].name != "" && this.links[index].link != "" && this.links[index].new) {
-        validNewLinks.push({
-          name : this.links[index].name,
-          link : `http://${this.links[index].link}`
-        });
-      }
-    }
-    return validNewLinks;
   }
 }
 
@@ -256,20 +186,6 @@ export class EventListCreateDialog{
   message : string;
   type : string;
   image;
-  links = [
-    {
-      name : "",
-      link : ""
-    },
-    {
-      name : "",
-      link : ""
-    },
-    {
-      name : "",
-      link : ""
-    },
-  ]
 
 
   constructor(
@@ -296,8 +212,6 @@ export class EventListCreateDialog{
       if (this.type == undefined) {
         this.type = "manual"
       }
-      // Retrieve usable links
-      let linksClean = this.checkLinks();
       // Add new event
       this.eventService.createEvent({
         localisation : this.localisation,
@@ -307,40 +221,14 @@ export class EventListCreateDialog{
         impact : this.impact,
         info : this.info,
         source : this.source,
-        message : this.message,
         type : this.type
       }).subscribe(
         (controlResponse) => {
-          // Upload image
-          if (this.image != undefined){
-            this.eventService.postImage(controlResponse._id, this.image).subscribe((imgResponse) => {
-              console.log(imgResponse);
-            })
-          }
-
-          // upload links
-          if (linksClean.length > 0) {
-            this.eventService.postLinks(controlResponse._id, linksClean).subscribe((linkResponse) =>{
-              console.log(linkResponse);
-            });
-          }
           // reload event list
           this.closingCallback();
-          this.fromPage.ngOnInit();
         }
       ); 
     }
   }
 
-  checkLinks(){
-    let returnLinks = [];
-    for (const link in this.links) {
-      if ((this.links[link].name != "" && this.links[link].link != "")) {
-        // Add http:// before the url
-        this.links[link].link = `http://${this.links[link].link}`
-      returnLinks.push(this.links[link]);  
-      } 
-    }
-    return returnLinks;
-  }
 }
