@@ -9,9 +9,6 @@ import { EventData } from './data/data.entity'
 import { Messages } from './control_interface/control_interface.entity'
 import { User } from './users/users.entity'
 import { MulterModule } from '@nestjs/platform-express'
-import { AuthModule } from './auth/auth.module';
-import { from } from 'rxjs/internal/observable/from';
-
 
 @Module({
   imports: [
@@ -36,7 +33,8 @@ import { from } from 'rxjs/internal/observable/from';
         User
       ],
       useUnifiedTopology : true
-  }), AuthModule],
+  }),
+  ],
   controllers: [],
   providers: [],
 })

@@ -1,15 +1,17 @@
-import { Body, Controller, Get, Post, Put, Delete } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Delete, Request, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service'
-
+import { LocalAuthGuard } from './local-auth.guard'
+import { JwtAuthGuard } from './jwt-auth.guard'
 
 @Controller("user/")
 export class UserController {
 
-  constructor(private userService: UsersService) {}
+  constructor(
+    private userService: UsersService) {}
 
   @Get()
-  async getUsers() {
-    return this.userService.getUser() 
+  async getUsers(@Body() user) {
+    return this.userService.getUser(user);
   }
 
   @Post()
@@ -25,5 +27,19 @@ export class UserController {
   @Delete()
   async deleteUser(@Body() user){
     return this.userService.deleteUser(user);
+  }
+
+  @UseGuards(LocalAuthGuard)
+  @Post("auth/")
+  async test(@Request() req){
+    return this.userService.login(req.user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get("checkauth/")
+  testJWT(@Body() user){
+    return {
+      connected : true
+    };
   }
 }

@@ -2,4 +2,5 @@
 <a id="title">
     <h1>Control Panel</h1>
 </a>
-<a class="button fancy-button logginButton" id="log_button" (click)="logIn()"><mat-icon>account_box</mat-icon> Login</a>
+<a *ngIf="!loggedIn" class="button fancy-button logginButton" id="log_button" (click)="logOut()"><mat-icon>account_box</mat-icon> Login</a>
+<a *ngIf="loggedIn" class="button fancy-button logginButton" id="log_button" (click)="logOut()"><mat-icon>account_box</mat-icon> Déconnexion</a>

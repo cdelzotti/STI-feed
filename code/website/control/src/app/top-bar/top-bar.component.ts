@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core'
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 
 @Component({
     selector:'top-bar_component',
@@ -7,13 +8,26 @@ import { Component, OnInit } from '@angular/core'
 })
 export class TopBarComponent implements OnInit{
     
-    constructor(){}
+    constructor(
+        private router: Router, 
+        private route: ActivatedRoute
+    ){}
+
+    loggedIn : boolean;
     
     ngOnInit(){
-
+        this.router.events.subscribe( event =>{
+            if (event instanceof NavigationEnd) {
+                if (localStorage.getItem("jwt")) {
+                    this.loggedIn = true
+                } else {
+                    this.loggedIn = false;
+                }
+            }});
     }
 
-    logIn():void{
-        window.alert("Not implemented yet :)")
+    logOut():void{
+        localStorage.removeItem("jwt");
+        this.router.navigateByUrl("");
     }
 }

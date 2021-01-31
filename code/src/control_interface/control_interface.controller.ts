@@ -1,4 +1,5 @@
-import { Body, Controller, Delete, Get, Post, Res, Req, Put, UseInterceptors, UploadedFile, Param, ParseBoolPipe, BadRequestException} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Res, Req, Put, UseInterceptors, UploadedFile, Param, UseGuards} from '@nestjs/common';
+import { JwtAuthGuard } from "../users/jwt-auth.guard"
 import { ControlInterfaceService } from './control_interface.service'
 import { EventData } from '../data/data.entity'
 import { ControlResponse } from './control_interface.dto'
@@ -12,6 +13,7 @@ import { identity } from 'rxjs/internal/util/identity';
 import { ObjectID } from 'mongodb';
 import { get } from 'http';
 import { Messages } from './control_interface.entity';
+
 
 @Controller("control/")
 export class ControlInterfaceController {
@@ -32,6 +34,7 @@ export class ControlInterfaceController {
    * matching the description of EventData
    * @returns Every event matching body
    */
+  @UseGuards(JwtAuthGuard)
   @Post("select-event/")
   async getEvents(@Body(new EventWithCompDatePipe()) body) : Promise<EventData[]> {
     // TODO : assert body
@@ -46,6 +49,7 @@ export class ControlInterfaceController {
    * @param id event identifier concerned by change
    * @returns A ControlResponse
    */
+  @UseGuards(JwtAuthGuard)
   @Put("event/")
   async editEvent(@Body(new EventWithIDPipe()) event) : Promise<ControlResponse>{
     return this.controlInterfaceService.editEvent(event["_id"], event);
@@ -57,6 +61,7 @@ export class ControlInterfaceController {
    * @param event A dscription of the events that must be deleted
    * @returns ControlResponse
    */
+  @UseGuards(JwtAuthGuard)
   @Delete("event/")
   async deleteEvent(@Body(new NormalEventPipe()) event) : Promise<ControlResponse>{
     return this.controlInterfaceService.deleteEvent(event);
@@ -69,6 +74,7 @@ export class ControlInterfaceController {
    * @requires event.id doesn't match an already existing index in DB
    * @returns ControlResponse
    */
+  @UseGuards(JwtAuthGuard)
   @Post("event/")
   async addEvent(@Body(new EventWithoutIDPipe()) event) : Promise<ControlResponse>{
     return this.controlInterfaceService.addEvent(event);
@@ -93,27 +99,32 @@ export class ControlInterfaceController {
     return this.controlInterfaceService.registerAttached(id, "")
   }
   
+  @UseGuards(JwtAuthGuard)
   @Post("getMsg/")
   async getMsg(@Body(new MessagePipe(1, true)) msg){
     return this.controlInterfaceService.getMessages(msg);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post("msg/")
   async addMsg(@Body(new MessagePipe(0, false)) msg) : Promise<ControlResponse>{
     return this.controlInterfaceService.addMessage(msg);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete("msg/:id")
   async deleteMessage(@Param(new ObjectIDPipe()) id : ObjectID){
     return this.controlInterfaceService.deleteMessage(id)
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put("msg/")
   async editMessage(@Body(new MessagePipe(2, false)) msg) : Promise<ControlResponse>{
     return this.controlInterfaceService.editMessage(msg);
   }
 
 
+  @UseGuards(JwtAuthGuard)
   @Get("eventmsg/:id")
   async getEventMessages(@Param(new ObjectIDPipe()) eventID){
     return this.controlInterfaceService.getEventMessage(eventID);

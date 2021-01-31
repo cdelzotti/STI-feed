@@ -5,6 +5,7 @@ import { ControlResponse } from './controlResponse'
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { environment } from '../../environments/environment';
 import { Router, ActivatedRoute } from '@angular/router';
+import { response } from 'express';
 
 @Component({
   selector: 'event-list',
@@ -17,7 +18,8 @@ export class EventListComponent implements OnInit {
     private eventService : EventsService, 
     public dialog: MatDialog,
     private router: Router, 
-    private route: ActivatedRoute){}
+    private route: ActivatedRoute){
+    }
 
   events : Event[]
   controlResponse : ControlResponse
