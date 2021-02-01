@@ -1,0 +1,9 @@
+<div id="login-credits">
+    <div class="alert" *ngIf="errorMessage != undefined">
+        <mat-icon>warning</mat-icon> <span>{{errorMessage}}</span>
+    </div>
+    <h1>Connexion</h1>
+    <p>Nom d'utilisateur : <input [(ngModel)]="username"/></p>
+    <p>Mot de passe : <input type="password" [(ngModel)]="password"/></p>
+    <p><button (click)="login()">Se connecter</button></p>
+</div>

@@ -14,7 +14,9 @@ export class MessagesComponent implements OnInit {
   constructor(
     private eventsServices : EventsService,
     private router: Router, 
-    private route: ActivatedRoute) {}
+    private route: ActivatedRoute) {
+      
+    }
 
   messages : Message[];
 

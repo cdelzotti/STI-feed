@@ -1,7 +1,7 @@
 import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
 import { ObjectID } from 'mongodb'
 
-class UsualFunctions{
+export class UsualPipeFunctions{
 
 
   static convertID(id : string){
@@ -105,19 +105,19 @@ class EventChecker{
    */
   checkEvent(thingReceived, dateComparative : boolean, idImportance : Number){
     // Check IDs
-    UsualFunctions.forceIDImportanceCompliance(thingReceived, idImportance);
+    UsualPipeFunctions.forceIDImportanceCompliance(thingReceived, idImportance);
     // Check ID and relevant
     for (const key in thingReceived) {
       if (this.allowedKey.includes(key)) {
         if (key == "_id") {
-          thingReceived["_id"] = UsualFunctions.convertID(thingReceived["_id"]);
+          thingReceived["_id"] = UsualPipeFunctions.convertID(thingReceived["_id"]);
         }
         // Check dates
         if (key == "dateDebut" || key == "dateFin") {
             if (dateComparative){
-              thingReceived[key] = UsualFunctions.tryToParseComparativeDate(thingReceived[key])
+              thingReceived[key] = UsualPipeFunctions.tryToParseComparativeDate(thingReceived[key])
             } else {
-              thingReceived[key] = UsualFunctions.tryToParseDate(thingReceived[key])
+              thingReceived[key] = UsualPipeFunctions.tryToParseDate(thingReceived[key])
             }
         }
       } else {
@@ -178,7 +178,7 @@ export class NormalEventPipe implements PipeTransform {
 export class ObjectIDPipe implements PipeTransform {
 
   transform(thingReceived: any, metadata: ArgumentMetadata) : ObjectID {
-    return UsualFunctions.convertID(thingReceived.id);
+    return UsualPipeFunctions.convertID(thingReceived.id);
   }
 }
 
@@ -206,23 +206,23 @@ export class MessagePipe implements PipeTransform {
 
   transform(thingReceived: any, metadata: ArgumentMetadata) : ObjectID {
     let allowedKeys : string[] = ["_id", "dateDebut", "dateFin", "title", "content", "type", "relatedEvent", "published"]
-    UsualFunctions.forceIDImportanceCompliance(thingReceived, this.idImportance);
+    UsualPipeFunctions.forceIDImportanceCompliance(thingReceived, this.idImportance);
     for (const key in thingReceived) {
       if ( !allowedKeys.includes(key)) {
         throw new BadRequestException(`${key} is not a valid key`)
       }
       if (key == "_id") {
-        thingReceived[key] = UsualFunctions.convertID(thingReceived[key]);
+        thingReceived[key] = UsualPipeFunctions.convertID(thingReceived[key]);
       }
       if (key == "relatedEvent") {
         // Just check it, no convertion
-        UsualFunctions.convertID(thingReceived[key])
+        UsualPipeFunctions.convertID(thingReceived[key])
       }
       if (key == "dateDebut" || key == "dateFin"){
         if (this.dateComparison) {
-          thingReceived[key] = UsualFunctions.tryToParseComparativeDate(thingReceived[key]);
+          thingReceived[key] = UsualPipeFunctions.tryToParseComparativeDate(thingReceived[key]);
         } else {
-          thingReceived[key] = UsualFunctions.tryToParseDate(thingReceived[key])
+          thingReceived[key] = UsualPipeFunctions.tryToParseDate(thingReceived[key])
         }
       }
       if (key == "published") {

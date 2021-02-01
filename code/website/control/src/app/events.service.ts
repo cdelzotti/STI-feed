@@ -8,19 +8,34 @@ import { Event } from './event-list/event'
 import { ControlResponse } from './event-list/controlResponse'
 import { Message } from './messages/message'
 
-let httpOpt = {
-  headers : new HttpHeaders({
-      'content-Type' : 'application/json',
-      'Access-Control-Allow-Origin' : 'GET'
-  }),
-  observe : 'body' as const
-}
+// let httpOpt = {
+//   headers : new HttpHeaders({
+//       'Authorization' : `Bearer ${localStorage.getItem('jwt')}`
+//   })
+// }
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventsService{
-    constructor(private http: HttpClient){}
+    constructor(private http: HttpClient){
+      this.refreshHeaders();
+    }
+
+    httpOpt = {
+      headers : new HttpHeaders({
+          'Authorization' : `Bearer ${localStorage.getItem('jwt')}`
+      })
+    }
+
+    refreshHeaders(){
+      this.httpOpt = {
+        headers : new HttpHeaders({
+            'Authorization' : `Bearer ${localStorage.getItem('jwt')}`
+        })
+      } 
+    }
+    
 
     /** 
     * Get current / incomming events from server 
@@ -32,12 +47,12 @@ export class EventsService{
         let body = {
           dateFin : ["more", hourLessDay.toISOString()]
         }
-      return this.http.post<Event[]>(eventUrl, body)
+      return this.http.post<Event[]>(eventUrl, body, this.httpOpt);
     }
 
     getSpecificEvents(body) {
       let eventUrl : string = `${environment.baseUrl}control/select-event/`;
-      return this.http.post<Event[]>(eventUrl, body);
+      return this.http.post<Event[]>(eventUrl, body, this.httpOpt);
     }
 
     /**
@@ -48,7 +63,7 @@ export class EventsService{
     editEvent(body : Event ) : Observable<ControlResponse>{
       // TODO : assert on body
       let eventUrl : string = `${environment.baseUrl}control/event/`
-      return this.http.put<ControlResponse>(eventUrl, body)
+      return this.http.put<ControlResponse>(eventUrl, body, this.httpOpt)
     }
 
     /**
@@ -59,19 +74,19 @@ export class EventsService{
     createEvent(body : Event) : Observable<ControlResponse>{
       // TODO : assert no ID
       let eventUrl : string = `${environment.baseUrl}control/event/`
-      return this.http.post<ControlResponse>(eventUrl, body)
+      return this.http.post<ControlResponse>(eventUrl, body, this.httpOpt)
     }
 
     postMessage(body) {
       // TODO assert body
       let url : string = `${environment.baseUrl}control/msg/`
-      return this.http.post<ControlResponse>(url, body)
+      return this.http.post<ControlResponse>(url, body, this.httpOpt)
     }
 
     getMessages(body) {
       // TODO assert body
       let url : string = `${environment.baseUrl}control/getMsg/`
-      return this.http.post<Message[]>(url, body)
+      return this.http.post<Message[]>(url, body, this.httpOpt)
     }
 
     getIncomingMessage(){
@@ -82,7 +97,7 @@ export class EventsService{
         dateFin : ["more", hourLessDay.toISOString()]
       }
       let url : string = `${environment.baseUrl}control/getMsg/`
-      return this.http.post<Message[]>(url, body)
+      return this.http.post<Message[]>(url, body, this.httpOpt)
     }
 
     getOldMessage(){
@@ -93,18 +108,33 @@ export class EventsService{
         dateFin : ["less", hourLessDay.toISOString()]
       }
       let url : string = `${environment.baseUrl}control/getMsg/`
-      return this.http.post<Message[]>(url, body)
+      return this.http.post<Message[]>(url, body, this.httpOpt)
     }
 
     updateMesssage(body) {
       // TODO assert body
       let url : string = `${environment.baseUrl}control/msg/`
-      return this.http.put<ControlResponse>(url, body)
+      return this.http.put<ControlResponse>(url, body, this.httpOpt)
     }
 
     deleteMessage(messageID : string){
       // TODO assert body
       let url : string = `${environment.baseUrl}control/msg/${messageID}`
-      return this.http.delete<ControlResponse>(url)
+      return this.http.delete<ControlResponse>(url,this.httpOpt)
+    }
+
+    login(user : string, password : string){
+      // TODO assert body
+      let url : string = `${environment.baseUrl}user/auth/`
+      return this.http.post(url, {
+        username : user,
+        password : password
+      },this.httpOpt)
+    }
+
+    checkAuth(){
+      // TODO assert body
+      let url : string = `${environment.baseUrl}user/checkauth/`
+      return this.http.get(url, this.httpOpt);
     }
 }

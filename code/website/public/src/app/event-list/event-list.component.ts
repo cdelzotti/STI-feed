@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { EventsService } from './../events.service'
-import { Event } from './event'
+import { Message } from './messages'
 import { ControlResponse } from './controlResponse'
 import { ActivatedRoute } from '@angular/router'
 
@@ -16,21 +16,23 @@ export class EventListComponent implements OnInit {
     private activateRoute : ActivatedRoute  
   ){}
 
-  events : Event[]
+  messages : Message[]
   controlResponse : ControlResponse
 
   /**
-   * Get published events
+   * Get published messages
    */
-  getEvents():void{
-      this.eventService.getEvents().subscribe(events => (this.events = events));
+  getMessages():void{
+      this.eventService.getCurrentMessages().subscribe(messages => {
+        this.messages = messages;
+      });
   }
 
    /** 
    * Angular function called on component load 
    */
   ngOnInit(): void {
-      this.getEvents()
+      this.getMessages();
   }
 
    /**

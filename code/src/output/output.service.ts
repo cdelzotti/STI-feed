@@ -10,42 +10,21 @@ export class OutputService {
   
     constructor(
         // Create variable needed to access database
-        @InjectRepository(EventData)
-        private eventRepository : Repository<EventData>,
         @InjectRepository(Messages)
         private messagesRepository : Repository<Messages>
     ){}
 
-    /**
-     * @returns Every events marked as relevant
-     */
-    async getPublicEvents() : Promise<EventData[]> {
-        // Get curent date
-        let hourLessDay : Date = new Date();
-        // remove minutes
-        hourLessDay.setHours(0, 0, 0, 0)
-        return this.eventRepository.find({
-            where : {
-                relevant : true,
-                dateFin : {$gte: hourLessDay}
-            },
-            order : {
-                dateDebut : "ASC"
-            }
-        });
-    }
-
         /**
      * Get every up to date Messages 
      * 
-     * @returns Every Messages related to `eventID`
+     * @returns select pubished events
      */
-    async getMessages() : Promise<Messages[]> {
+    async getMessages(body) : Promise<Messages[]> {
         // TODO : Limiter la date
+        // Returns only published event
+        body.published = true;
          return this.messagesRepository.find({
-            where : {
-
-            },
+            where : body,
             order : {
                 dateDebut : "ASC"
             }

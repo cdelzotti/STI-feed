@@ -4,9 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { EventData } from '../data/data.entity'
 import { Messages } from "../control_interface/control_interface.entity"
 import { OutputService } from './output.service'
+import { ControlInterfaceModule } from '../control_interface/control_interface.module'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([EventData, Messages])],
+  imports: [TypeOrmModule.forFeature([EventData, Messages]), ControlInterfaceModule],
   controllers: [OutputController],
   providers: [OutputService],
 })

@@ -7,13 +7,11 @@
         <td>Source</td>
         <td>Type</td>
     </thead>
-    <tr *ngFor="let event of events">
-        <td><a [routerLink]="['details', event._id]">{{ event["localisation"] }}</a></td>
-        <td>{{ event["impact"] }}</td>
-        <td>{{ beautifulDate(event["dateDebut"]) }}</td>
-        <td>{{ beautifulDate(event["dateFin"]) }}</td>
-        <td>{{ event["source"] }}</td>
-        <td>{{ event["type"] }}</td>
+    <tr *ngFor="let message of messages">
+        <td><a [routerLink]="['details', message._id]">{{ message["title"] }}</a></td>
+        <td>{{ beautifulDate(message["dateDebut"]) }}</td>
+        <td>{{ beautifulDate(message["dateFin"]) }}</td>
+        <td>{{ message["type"] }}</td>
     </tr>
 </table>
 
