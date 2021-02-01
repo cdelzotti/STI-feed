@@ -8,13 +8,15 @@ import { EventExtractorMiddleware } from './control_interface.middleware'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
 import { UserModule } from '../users/user.module';
+import { UsualPipeFunctions } from './control_interface.pipe'
 
 
 // Module for the control component. Handles editing/getting data and the control website
 @Module({
   imports: [TypeOrmModule.forFeature([EventData, Messages]), UserModule],
   controllers: [ControlInterfaceController],
-  providers: [ControlInterfaceService],
+  providers: [ControlInterfaceService, UsualPipeFunctions],
+  exports : [UsualPipeFunctions]
 })
 export class ControlInterfaceModule {
 }

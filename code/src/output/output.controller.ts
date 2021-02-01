@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Res } from '@nestjs/common';
 import { EventData } from '../data/data.entity'
 import { Messages } from '../control_interface/control_interface.entity'
-import { ObjectIDPipe } from '../control_interface/control_interface.pipe'
+import { MessageRequest } from './output.pipe'
 import { OutputService } from './output.service'
 import { Response } from 'express'
 
@@ -17,17 +17,10 @@ export class OutputController {
     response.redirect("/public-site/index.html");
   }
 
-  @Get("event/")
-  /**
-   * @returns the events that are marked as relevant
-   */
-  async getPublicEvents(): Promise<EventData[]>{
-    return this.outputService.getPublicEvents();
-  }
 
-  @Get("msg/")
-  async getMsg(): Promise<Messages[]>{
-    return this.outputService.getMessages();
+  @Post("msg/")
+  async getMsg(@Body(new MessageRequest()) body): Promise<Messages[]>{
+    return this.outputService.getMessages(body);
   }
 
 }
