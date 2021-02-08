@@ -20,7 +20,6 @@ export class EventDetailsComponent implements OnInit {
     private eventService : EventsService,
     private route : ActivatedRoute
     ) { }
-
   message : Message;
 
   ngOnInit(): void {
@@ -33,6 +32,10 @@ export class EventDetailsComponent implements OnInit {
         this.message = message.shift();
       })
     })
+  }
+
+  applyBeautifulDate(date : string) : string{
+    return EventsService.beautifulDate(date);
   }
 
 }

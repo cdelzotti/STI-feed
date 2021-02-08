@@ -35,31 +35,8 @@ export class EventListComponent implements OnInit {
       this.getMessages();
   }
 
-   /**
-   * Transform an ugly date into a nice string
-   * 
-   * @param uglyDate a date formatted as a 'YYY-MM-DDTHH-MM-SS.SZ' string
-   * @returns a nicely formatted date in plain text
-   */
-  beautifulDate(uglyDate : string) : string {
-    let numberToMonth : string[] = [
-      "Janvier",
-      "Février",
-      "Mars",
-      "Avril",
-      "Mai",
-      "Juin",
-      "Juillet",
-      "Août",
-      "Septembre",
-      "Octobre",
-      "Novembre",
-      "Décembre"
-    ]
 
-    let date : string = uglyDate.split("T")[0]
-    let dateComponents : string[] = date.split("-")
-    return `${+dateComponents[2]} ${numberToMonth[+dateComponents[1] - 1]} ${dateComponents[0]}`
+  applyBeautifulDate(date : string) : string {
+    return EventsService.beautifulDate(date);
   }
-
 }
