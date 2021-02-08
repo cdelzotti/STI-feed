@@ -6,5 +6,6 @@ export interface Message {
     content? : string,
     type? : string,
     published? : boolean,
-    relatedEvent?: string
+    relatedEvent?: string,
+    relatedType?: string
 }

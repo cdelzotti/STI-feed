@@ -1,18 +1,28 @@
 <h2 mat-dialog-title>Ajouter un évènement</h2>
 <mat-dialog-content class="mat-typography">
+  <div id="warnings" *ngIf="errorMessage != '' && errorMessage != undefined">
+    <div id="warning-logo">
+      <img src="{{ backUrl }}pictures/warning.webp"/>
+    </div>
+    <div id="warning-message">
+      <h3>Au moins une erreur est présente dans ce formulaire</h3>
+      <span id="warningMessage">{{ errorMessage }}</span>
+    </div>
+  </div>
 
-  <p><b>Lieu</b> : <input [(ngModel)]="localisation"/></p>
+  <p><b>Lieu<span class="mandatory-field">*</span></b> : <input [(ngModel)]="localisation"/></p>
 
   <p><b>Source</b> : <input [(ngModel)]="source"/> | <b>Type</b> : <input [(ngModel)]="type" placeholder="manual"/></p>
 
-  <p><b>Impact</b> : <input [(ngModel)]="impact"/></p>
+  <p><b>Impact<span class="mandatory-field">*</span></b> : <input [(ngModel)]="impact"/></p>
 
-  <p><b>Du </b> <input type="date" [(ngModel)]="dateDebut"/> <b> au </b> <input type="date" [(ngModel)]="dateFin"/></p>
+  <p><b>Du<span class="mandatory-field">*</span> </b> <input type="date" [(ngModel)]="dateDebut"/> <b> au<span class="mandatory-field">*</span> </b> <input type="date" [(ngModel)]="dateFin"/></p>
 
   <p><b>Informations supplémentaires</b></p>
 
   <textarea class="large-input" [(ngModel)]="info" rows="10" cols="100" placeholder="Information uniquement accessible pour la gestion du site"></textarea>
 
+  <p>Le champs marqués d'une <span class="mandatory-field">*</span> sont obligatoires</p>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button class="mat-dialog-button" mat-button mat-dialog-close>Annuler</button>

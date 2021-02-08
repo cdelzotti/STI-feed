@@ -16,8 +16,8 @@
     <tr *ngFor="let event of events">
         <td>{{ event["localisation"] }}</td>
         <td>{{ event["impact"] }}</td>
-        <td>{{ beautifulDate(event["dateDebut"]) }}</td>
-        <td>{{ beautifulDate(event["dateFin"]) }}</td>
+        <td>{{ applyDateChanges(event["dateDebut"]) }}</td>
+        <td>{{ applyDateChanges(event["dateFin"]) }}</td>
         <td>{{ event["source"] }}</td>
         <td>{{ event["type"] }}</td>
         <td><a class="button fancy-button publishButton" (click)="edit(event['_id'])"><mat-icon>edit</mat-icon></a></td>

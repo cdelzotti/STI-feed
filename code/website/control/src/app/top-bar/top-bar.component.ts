@@ -23,7 +23,8 @@ export class TopBarComponent implements OnInit{
                 } else {
                     this.loggedIn = false;
                 }
-            }});
+            }
+        });
     }
 
     logOut():void{

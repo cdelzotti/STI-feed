@@ -1,6 +1,14 @@
 <h1>Édition d'un message</h1>
 
-<span id="warningMessage">{{ errorMessage }}</span>
+<div id="warnings" *ngIf="errorMessage != '' && errorMessage != undefined">
+  <div id="warning-logo">
+    <img src="{{ backUrl }}pictures/warning.webp"/>
+  </div>
+  <div id="warning-message">
+    <h3>Au moins une erreur est présente dans ce formulaire</h3>
+    <span id="warningMessage">{{ errorMessage }}</span>
+  </div>
+</div>
 
 <div id="messageEditionFields">
 
@@ -19,8 +27,8 @@
     <h2>Informations générales</h2>
 
     <div class="headerFieldLeft">
-      <p><b>Titre</b> : <input [(ngModel)]="title"/></p>
-      <p><b>Période de publication du message : </b> du <input type="date" [(ngModel)]="dateDebut"/> au <input type="date" [(ngModel)]="dateFin"/></p>
+      <p><b>Titre<span class="mandatory-field">*</span></b> : <input [(ngModel)]="title"/></p>
+      <p><b>Période de publication du message : </b> du<span class="mandatory-field">*</span> <input type="date" [(ngModel)]="dateDebut"/> au<span class="mandatory-field">*</span> <input type="date" [(ngModel)]="dateFin"/></p>
     </div>
     <div class="headerFieldRight">
       <p><b>Type</b> : <input [(ngModel)]="type" placeholder="Annonce"/></p>
@@ -29,7 +37,7 @@
   </div>
 
   <div id="messageContent">
-    <h2>Contenu du message</h2>
+    <h2>Contenu du message<span class="mandatory-field">*</span></h2>
     <editor [(ngModel)]="content"
     [init]="{
       height: 500,
@@ -45,6 +53,10 @@
         bullist numlist outdent indent | removeformat | help'
     }"
     ></editor>
+  </div>
+
+  <div id="disclaimers">
+    <p>Les champs marqués d'une <span class="mandatory-field">*</span> sont obligatoires</p>
   </div>
 
   <div id="validate">

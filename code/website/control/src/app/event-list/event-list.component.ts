@@ -79,6 +79,7 @@ export class EventListComponent implements OnInit {
         // Closing callback
         dialogRef.afterClosed().subscribe(result => {
           console.log(`Dialog result: ${result}`);
+          this.ngOnInit();
         });
   }
 
@@ -98,31 +99,8 @@ export class EventListComponent implements OnInit {
       this.getEvents()
   }
 
-  /**
-   * Transform an ugly date into a nice string
-   * 
-   * @param uglyDate a date formatted as a 'YYY-MM-DDTHH-MM-SS.SZ' string
-   * @returns a nicely formatted date in plain text
-   */
-  beautifulDate(uglyDate : string) : string {
-    let numberToMonth : string[] = [
-      "Janvier",
-      "Février",
-      "Mars",
-      "Avril",
-      "Mai",
-      "Juin",
-      "Juillet",
-      "Août",
-      "Septembre",
-      "Octobre",
-      "Novembre",
-      "Décembre"
-    ]
-
-    let date : string = uglyDate.split("T")[0]
-    let dateComponents : string[] = date.split("-")
-    return `${+dateComponents[2]} ${numberToMonth[+dateComponents[1] - 1]} ${dateComponents[0]}`
+  applyDateChanges(date : string){
+    return EventsService.beautifulDate(date);
   }
 }
 
@@ -188,6 +166,8 @@ export class EventListCreateDialog{
   message : string;
   type : string;
   image;
+  errorMessage : string;
+  backUrl : string;
 
 
   constructor(
@@ -197,6 +177,7 @@ export class EventListCreateDialog{
   ) {
     this.fromPage = data.fromPage;
     this.closingCallback = data.closingCallback;
+    this.backUrl = environment.baseUrl;
   }
 
   handleImage(){
@@ -206,7 +187,16 @@ export class EventListCreateDialog{
   submit(){
     // Check that minimal fields are filled
     // TODO assert dateFIn > Date debut
-    if (!(this.localisation == undefined || this.impact == undefined || this.dateDebut == undefined || this.dateFin == undefined)) {
+    this.errorMessage = "";
+    if (this.localisation == undefined || this.localisation == '') {
+      this.errorMessage = "Lieu non spécifié";
+    } else if (this.impact == undefined || this.impact == '') {
+      this.errorMessage = "Impact non spécifié";
+    } else if (this.dateDebut == undefined || this.dateDebut == '') {
+      this.errorMessage = "Date de commencement non spécifiée";
+    } else if (this.dateFin == undefined || this.dateFin == '') {
+      this.errorMessage = "Date de fin non spécifiée";
+    } else {
       // Assign default values
       if (this.relevant == undefined) {
         this.relevant = false;

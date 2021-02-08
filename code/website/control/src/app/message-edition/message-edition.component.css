@@ -4,6 +4,8 @@ h1 {
 
 #validate{
     margin-top: 2%;
+    width: 10%;
+    margin-left: 45%;
 }
 
 .headerFields{
@@ -27,11 +29,6 @@ h1 {
     margin-left: 10%;
 }
 
-#warningMessage {
-    color: red;
-}
-
-#messageContent{
-    margin-right: 5%;
+#disclaimers{
     margin-left: 5%;
 }

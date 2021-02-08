@@ -31,10 +31,12 @@ export class MessagesComponent implements OnInit {
     if (typeRequired == "current") {
       this.eventsServices.getIncomingMessage().subscribe((messages) => {
         this.messages = messages;
+        this.getRelatedEventType();
       })
     } else {
       this.eventsServices.getOldMessage().subscribe((messages) => {
         this.messages = messages;
+        this.getRelatedEventType();
       })
     }
   }
@@ -56,5 +58,28 @@ export class MessagesComponent implements OnInit {
     this.eventsServices.deleteMessage(id).subscribe((response) => {
       this.ngOnInit();
     })
+  }
+
+  getRelatedEventType(){
+    for (let index = 0; index < this.messages.length; index++) {
+      this.messages[index].relatedType = "Chargement en cours";
+      if (this.messages[index].relatedEvent == "" || this.messages[index].relatedEvent == undefined) {
+        this.messages[index].relatedType = "Indépendant";
+      } else {
+        this.eventsServices.getSpecificEvents({
+          _id : this.messages[index].relatedEvent
+        }).subscribe(event => {
+          if (event.length == 0) {
+            this.messages[index].relatedType = "Évènement introuvable"
+          } else {
+            this.messages[index].relatedType = event[0].type;
+          }
+        });
+      } 
+    }
+  }
+
+  applyDateChanges(date : string){
+    return EventsService.beautifulDate(date);
   }
 }

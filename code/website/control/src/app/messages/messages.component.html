@@ -12,18 +12,20 @@
             <td>Publié</td>
             <td>Editer</td>
             <td>Supprimer</td>
+            <td>Type de l'évènement lié</td>
         </tr>
     </thead>
     <tbody>
         <tr *ngFor="let message of messages">
-            <td><a>{{ message["title"] }}</a></td>
-            <td>{{ message["dateDebut"] }}</td>
-            <td>{{ message["dateFin"] }}</td>
+            <td>{{ message["title"] }}</td>
+            <td>{{ applyDateChanges(message["dateDebut"]) }}</td>
+            <td>{{ applyDateChanges(message["dateFin"]) }}</td>
             <td>{{ message["type"] }}</td>
             <td *ngIf="!message['published']"><a class="button fancy-button publishButton" (click)="publish(message['_id'], true)"><mat-icon>email</mat-icon></a></td>
             <td *ngIf="message['published']"><a class="button fancy-button unpublishButton" (click)="publish(message['_id'], false)"><mat-icon>cancel</mat-icon></a></td>
             <td><a class="button fancy-button publishButton" [routerLink]="['message-edit', message['_id']]"><mat-icon>edit</mat-icon></a></td>
             <td><a class="button fancy-button publishButton" (click)="delete(message['_id'])"><mat-icon>delete</mat-icon></a></td>
+            <td>{{ message["relatedType"] }}</td>
         </tr>
     </tbody>
 </table>

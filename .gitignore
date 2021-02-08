@@ -3,4 +3,4 @@ db.sqlite
 dist
 mongoData
 coverage
-code/static
+code/static/tinymce

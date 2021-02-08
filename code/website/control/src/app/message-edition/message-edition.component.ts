@@ -4,6 +4,7 @@ import { response } from 'express';
 import { EventsService } from "../events.service"
 import { Router, ActivatedRoute } from '@angular/router';
 import { Event } from '../event-list/event'
+import {environment} from '../../environments/environment';
 
 
 @Component({
@@ -18,6 +19,7 @@ export class MessageEditionComponent implements OnInit {
     private router: Router, 
     private route: ActivatedRoute
   ) {
+    this.backUrl = environment.baseUrl;
     // Checks if this is an edition or a creation
     this.route.params.subscribe(param => {
       // If it's an edition
@@ -70,6 +72,7 @@ export class MessageEditionComponent implements OnInit {
   type : string;
   published : boolean;
   errorMessage : string;
+  backUrl : string;
 
   ngOnInit(): void {
     this.published = true;
