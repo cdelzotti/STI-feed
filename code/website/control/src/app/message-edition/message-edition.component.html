@@ -60,7 +60,7 @@
   </div>
 
   <div id="validate">
-    <a class="button fancy-button publishButton" id="messageAdd" (click)="addMessage()"><mat-icon>add</mat-icon>Créer message</a>
+    <a class="button fancy-button publishButton" id="messageAdd" (click)="addMessage()"><mat-icon *ngIf="newMessage">add</mat-icon><mat-icon *ngIf="!newMessage">edit</mat-icon>Enregistrer</a>
   </div>
 
 
