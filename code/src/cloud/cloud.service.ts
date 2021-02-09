@@ -14,7 +14,7 @@ export class CloudService {
 
     async checkFile(name : string){
         return {
-            link : `/cloud/${name}`
+            link : `cloud/${name}`
         }
     }
 }

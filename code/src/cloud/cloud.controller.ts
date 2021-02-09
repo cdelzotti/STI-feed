@@ -2,10 +2,9 @@ import { Body, Controller, Delete, Get, Post, Res, Req, Put, UseInterceptors, Up
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer'
 import { handleFileName } from '../utils/upload-file.utils'
-import { ObjectID } from 'mongodb';
-
 import { CloudService } from './cloud.service'
-import { get } from 'http';
+import { JwtAuthGuard } from "../users/jwt-auth.guard"
+
 
 @Controller('cloud')
 export class CloudController {
@@ -15,6 +14,7 @@ export class CloudController {
    * Add and image
    */
   @Post("")
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file', {
     storage : diskStorage({
       destination : './static/cloud',
@@ -27,6 +27,7 @@ export class CloudController {
 
 
   @Delete("")
+  @UseGuards(JwtAuthGuard)
   async removeAttached(@Body("name") name : string) {
     this.cloudService.deleteFile(name);
     return {
@@ -35,6 +36,7 @@ export class CloudController {
   }
 
   @Get("")
+  @UseGuards(JwtAuthGuard)
   async uploadList(){
     return this.cloudService.getFilesList();
   }
