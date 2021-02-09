@@ -36,6 +36,11 @@
     </div>
   </div>
 
+  <div class="fileUpload">
+    <p>Uploader un fichier : <input type="file" (change)="uploadFile($event.target.files)"></p>
+    <p *ngIf="fileLink != '' && fileLink != undefined"><b>Lien à utiliser dans votre message : </b> <a href="{{backUrl}}{{fileLink}}">{{backUrl}}{{fileLink}}</a></p>
+  </div>
+
   <div id="messageContent">
     <h2>Contenu du message<span class="mandatory-field">*</span></h2>
     <editor [(ngModel)]="content"

@@ -132,6 +132,13 @@ export class EventsService{
       },this.httpOpt)
     }
 
+    postFile(fileToUpload: File){
+      let url : string = `${environment.baseUrl}cloud/`
+      const formData: FormData = new FormData();
+      formData.append('file', fileToUpload, fileToUpload.name);
+      return this.http.post(url, formData, this.httpOpt);
+  }
+
     checkAuth(){
       // TODO assert body
       let url : string = `${environment.baseUrl}user/checkauth/`
