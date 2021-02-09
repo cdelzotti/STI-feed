@@ -4,3 +4,4 @@ dist
 mongoData
 coverage
 code/static/tinymce
+code/static/cloud
