@@ -14,6 +14,7 @@ async function bootstrap() {
   app.use('/control-site' ,express.static('website/control/dist/control'));
   app.use('/public-site' ,express.static('website/public/dist/control'));
   app.use('/pictures' ,express.static('static/img'));
+  app.use('/cloud' ,express.static('static/cloud'));
   app.use('/tinymce' ,express.static('static/tinymce'));
 
   app.enableCors();

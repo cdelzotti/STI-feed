@@ -8,7 +8,9 @@ import { Connection } from 'typeorm'
 import { EventData } from './data/data.entity'
 import { Messages } from './control_interface/control_interface.entity'
 import { User } from './users/users.entity'
+import { Upload } from './cloud/cloud.entity'
 import { MulterModule } from '@nestjs/platform-express'
+import { CloudModule } from './cloud/cloud.module';
 
 @Module({
   imports: [
@@ -30,10 +32,11 @@ import { MulterModule } from '@nestjs/platform-express'
       entities : [
         EventData,
         Messages,
-        User
+        User,
+        Upload
       ],
       useUnifiedTopology : true
-  }),
+  }), CloudModule,
   ],
   controllers: [],
   providers: [],
