@@ -29,6 +29,12 @@ h1 {
     margin-left: 10%;
 }
 
+.fileUpload{
+    width: 50%;
+    text-align: center;
+    margin-left: 25%;
+}
+
 #disclaimers{
     margin-left: 5%;
 }

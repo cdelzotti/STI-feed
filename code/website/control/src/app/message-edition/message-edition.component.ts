@@ -73,9 +73,16 @@ export class MessageEditionComponent implements OnInit {
   published : boolean;
   errorMessage : string;
   backUrl : string;
+  fileLink : string;
 
   ngOnInit(): void {
     this.published = true;
+  }
+
+  uploadFile(files : FileList){
+    this.eventService.postFile(files.item(0)).subscribe(response => {
+      this.fileLink = response["link"];
+    });
   }
 
   addMessage() : void{
