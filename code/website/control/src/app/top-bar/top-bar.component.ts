@@ -15,7 +15,9 @@ export class TopBarComponent implements OnInit{
 
     loggedIn : boolean;
     
+
     ngOnInit(){
+        // Define if user is connected or not
         this.router.events.subscribe( event =>{
             if (event instanceof NavigationEnd) {
                 if (localStorage.getItem("jwt")) {
@@ -27,8 +29,11 @@ export class TopBarComponent implements OnInit{
         });
     }
 
+
     logOut():void{
+        // Disconnect user
         localStorage.removeItem("jwt");
+        // Redirects to login page
         this.router.navigateByUrl("");
     }
 }

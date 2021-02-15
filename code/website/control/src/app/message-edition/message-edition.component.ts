@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { EditorComponent } from '@tinymce/tinymce-angular'
-import { response } from 'express';
 import { EventsService } from "../events.service"
 import { Router, ActivatedRoute } from '@angular/router';
 import { Event } from '../event-list/event'
@@ -29,6 +27,7 @@ export class MessageEditionComponent implements OnInit {
         this.eventService.getMessages({
           _id : param.id
         }).subscribe(message =>{
+          // Define object variable based on server response
           this.id = param.id;
           this.relatedEvent = message[0].relatedEvent;
           if (message[0].dateDebut != undefined) {
@@ -124,6 +123,7 @@ export class MessageEditionComponent implements OnInit {
           }
         })
     } else {
+        // If it's a message edition, send update
         this.eventService.updateMesssage({
           _id : this.id,
           relatedEvent : this.relatedEvent,

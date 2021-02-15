@@ -105,7 +105,7 @@ export class EventListComponent implements OnInit {
 }
 
 
-// The dialogBox edition content
+// The dialogBox edition
 @Component({
   selector: 'event-list-edit-dialog',
   templateUrl: 'event-list.dialog-content.html',
@@ -143,7 +143,7 @@ export class EventListEditDialog {
 }
 
 
-// The dialogBox creation content
+// The dialogBox creation
 @Component({
   selector: 'event-list-create-dialog',
   templateUrl: 'event-list.dialog-create.html',
