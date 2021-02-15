@@ -1,6 +1,5 @@
-import { Entity, Column, ObjectID, ObjectIdColumn, OneToMany} from 'typeorm';
-import { IsString, IsInt, IsBoolean, IsDate } from 'class-validator';
-import { Messages } from '../control_interface/control_interface.entity'
+import { Entity, Column, ObjectID, ObjectIdColumn} from 'typeorm';
+import { IsString, IsBoolean, IsDate } from 'class-validator';
 
 
 @Entity("EventData")
@@ -29,14 +28,6 @@ export class EventData{
     @IsString()
     source? : string;
 
-    @IsBoolean()
-    @Column()
-    relevant? : boolean;
-
-    @IsString()
-    @Column({ nullable: true })
-    message? : string;
-
     @IsString()
     @Column({ nullable: true })
     type? : string;
@@ -44,8 +35,4 @@ export class EventData{
     @IsString()
     @Column({ nullable: true })
     info? : string;
-
-    @IsString()
-    @Column({ nullable: true })
-    attachedFile? : string;
 }

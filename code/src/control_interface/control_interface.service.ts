@@ -102,30 +102,6 @@ export class ControlInterfaceService {
     }
 
     /**
-     * Edits the database to set the attached file field to `filename`
-     * 
-     * @param id An object identifier
-     * @param filename Name of the attached file
-     */
-    async registerAttached(id : ObjectID, filename){
-        await this.eventRepository.update({
-            _id : id
-        }, {
-            attachedFile : filename
-        }).catch((e) => {
-            throw new BadRequestException({
-                status : `${e}`,
-                error : true
-            });
-        });
-        return {
-            status : "",
-            error : false
-        };
-    }
-
-
-    /**
      * Add a message into the db
      * 
      * @param eventID Event identifier

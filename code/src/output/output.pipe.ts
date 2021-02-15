@@ -1,7 +1,10 @@
-import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
+import { PipeTransform, ArgumentMetadata, BadRequestException } from '@nestjs/common';
 import { UsualPipeFunctions } from '../control_interface/control_interface.pipe'
-import { ObjectID } from 'mongodb'
 
+
+/**
+ * Checks integrity of provided message structure
+ */
 export class MessageRequest implements PipeTransform {
     transform(thingReceived: any, metadata: ArgumentMetadata) {
         let allowedKey : string[] = [

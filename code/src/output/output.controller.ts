@@ -1,5 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Res } from '@nestjs/common';
-import { EventData } from '../data/data.entity'
+import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 import { Messages } from '../control_interface/control_interface.entity'
 import { MessageRequest } from './output.pipe'
 import { OutputService } from './output.service'
@@ -17,7 +16,11 @@ export class OutputController {
     response.redirect("/public-site/index.html");
   }
 
-
+  /**
+   * Return published messages matching `body`
+   * 
+   * @param body 
+   */
   @Post("msg/")
   async getMsg(@Body(new MessageRequest()) body): Promise<Messages[]>{
     return this.outputService.getMessages(body);

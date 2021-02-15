@@ -1,18 +1,11 @@
-import { Body, Controller, Delete, Get, Post, Res, Req, Put, UseInterceptors, UploadedFile, Param, UseGuards} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Res, Put, Param, UseGuards} from '@nestjs/common';
 import { JwtAuthGuard } from "../users/jwt-auth.guard"
 import { ControlInterfaceService } from './control_interface.service'
 import { EventData } from '../data/data.entity'
 import { ControlResponse } from './control_interface.dto'
-import * as assert from 'assert'
 import { Response } from 'express'
 import { EventWithCompDatePipe, EventWithIDPipe, EventWithoutIDPipe, NormalEventPipe, ObjectIDPipe, MessagePipe} from "./control_interface.pipe"
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer'
-import { handleFileName } from '../utils/upload-file.utils'
-import { identity } from 'rxjs/internal/util/identity';
 import { ObjectID } from 'mongodb';
-import { get } from 'http';
-import { Messages } from './control_interface.entity';
 
 
 @Controller("control/")
@@ -79,44 +72,45 @@ export class ControlInterfaceController {
   async addEvent(@Body(new EventWithoutIDPipe()) event) : Promise<ControlResponse>{
     return this.controlInterfaceService.addEvent(event);
   }
-
+  
   /**
-   * Add and image
+   * Get messages matching `msg`
+   * 
+   * @param msg 
    */
-  @Post("picture/:id")
-  @UseInterceptors(FileInterceptor('file', {
-    storage : diskStorage({
-      destination : './static/img',
-      filename : handleFileName
-    })
-  }))
-  async uploadAttached(@Param(new ObjectIDPipe()) id : ObjectID, @UploadedFile() file) : Promise<ControlResponse> {
-    return this.controlInterfaceService.registerAttached(id, file.filename);
-  }
-  
-  @Delete("picture/:id")
-  async removeAttached(@Param(new ObjectIDPipe()) id : ObjectID) : Promise<ControlResponse>{
-    return this.controlInterfaceService.registerAttached(id, "")
-  }
-  
   @UseGuards(JwtAuthGuard)
   @Post("getMsg/")
   async getMsg(@Body(new MessagePipe(1, true)) msg){
     return this.controlInterfaceService.getMessages(msg);
   }
 
+  /**
+   * Add a message
+   * 
+   * @param msg 
+   */
   @UseGuards(JwtAuthGuard)
   @Post("msg/")
   async addMsg(@Body(new MessagePipe(0, false)) msg) : Promise<ControlResponse>{
     return this.controlInterfaceService.addMessage(msg);
   }
 
+  /**
+   * Delete a message
+   * 
+   * @param id a mongoDB id
+   */
   @UseGuards(JwtAuthGuard)
   @Delete("msg/:id")
   async deleteMessage(@Param(new ObjectIDPipe()) id : ObjectID){
     return this.controlInterfaceService.deleteMessage(id)
   }
 
+  /**
+   * Edit a given message
+   * 
+   * @param msg Message to edit (id must be provided)
+   */
   @UseGuards(JwtAuthGuard)
   @Put("msg/")
   async editMessage(@Body(new MessagePipe(2, false)) msg) : Promise<ControlResponse>{
@@ -124,6 +118,11 @@ export class ControlInterfaceController {
   }
 
 
+  /**
+   * Get every messages related to an event
+   * 
+   * @param eventID : A mongo DB id
+   */
   @UseGuards(JwtAuthGuard)
   @Get("eventmsg/:id")
   async getEventMessages(@Param(new ObjectIDPipe()) eventID){

@@ -36,13 +36,11 @@ export class DataService {
                 let currentEvent : EventData = new EventData();
                 currentEvent.localisation = worksheet.getCell(`C${row}`).value as string;
                 currentEvent.type = "AP";
-                currentEvent.attachedFile = "";
                 currentEvent.impact = worksheet.getCell(`E${row}`).value as string;
                 currentEvent.dateDebut = worksheet.getCell(`F${row}`).value as Date;
                 currentEvent.dateFin = worksheet.getCell(`G${row}`).value as Date;
                 currentEvent.source = worksheet.getCell(`H${row}`).value as string;
                 currentEvent.info = worksheet.getCell(`N${row}`).value as string;
-                currentEvent.relevant = false;
 
                 // Get alike elements stored
                 let dbContent : EventData[] = await this.eventRepository.find({
