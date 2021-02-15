@@ -10,8 +10,11 @@ import { JwtAuthGuard } from "../users/jwt-auth.guard"
 export class CloudController {
 
     constructor(private cloudService : CloudService){}
-/**
-   * Add and image
+  
+  /**
+   * Add a file and serve it in static access
+   * 
+   * The file must be served in a form-data under de 'file' key
    */
   @Post("")
   @UseGuards(JwtAuthGuard)
@@ -25,7 +28,11 @@ export class CloudController {
     return this.cloudService.checkFile(file.filename);
   }
 
-
+  /**
+   * Delete a file
+   * 
+   * @param name file name
+   */
   @Delete("")
   @UseGuards(JwtAuthGuard)
   async removeAttached(@Body("name") name : string) {
@@ -35,9 +42,14 @@ export class CloudController {
     }
   }
 
+  /**
+   * Show every uploaded images
+   * 
+   * @returns The name of every file uploaded 
+   */
   @Get("")
   @UseGuards(JwtAuthGuard)
-  async uploadList(){
+  async uploadList() : Promise<String[]>{
     return this.cloudService.getFilesList();
   }
 }
