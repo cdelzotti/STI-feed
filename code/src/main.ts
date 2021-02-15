@@ -13,8 +13,11 @@ async function bootstrap() {
   // Serve websites
   app.use('/control-site' ,express.static('website/control/dist/control'));
   app.use('/public-site' ,express.static('website/public/dist/control'));
+  // Serve static ressources for websites
   app.use('/pictures' ,express.static('static/img'));
+  // Serve uploaded files for control site
   app.use('/cloud' ,express.static('static/cloud'));
+  // Serve TinyMCE for WYSIWYG editor in control site
   app.use('/tinymce' ,express.static('static/tinymce'));
 
   app.enableCors();

@@ -1,6 +1,3 @@
-import {extname} from 'path'
-import {readdirSync} from 'fs'
-import { BadRequestException } from "@nestjs/common"
 
 /**
  * Define the name of an uploaded file
