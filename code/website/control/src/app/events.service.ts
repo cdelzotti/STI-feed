@@ -7,6 +7,7 @@ import { environment } from '../environments/environment'
 import { Event } from './event-list/event'
 import { ControlResponse } from './event-list/controlResponse'
 import { Message } from './messages/message'
+import * as assert from 'assert'
 
 // let httpOpt = {
 //   headers : new HttpHeaders({
@@ -37,6 +38,13 @@ export class EventsService{
     }
     
 
+    refreshEvents() : Observable<any> {
+      let eventUrl : string = `${environment.baseUrl}data/update-ap/`
+      return this.http.post<Event[]>(eventUrl, {
+        await : true
+      }, this.httpOpt);
+    }
+
     /** 
     * Get current / incomming events from server 
     * */
@@ -61,7 +69,8 @@ export class EventsService{
      * @param body : What the body should look like after update. DO NOT forgot to give the "_id" field ! 
      */
     editEvent(body : Event ) : Observable<ControlResponse>{
-      // TODO : assert on body
+      // An edition body should provide _id field
+      assert(body._id != undefined)
       let eventUrl : string = `${environment.baseUrl}control/event/`
       return this.http.put<ControlResponse>(eventUrl, body, this.httpOpt)
     }
@@ -72,25 +81,25 @@ export class EventsService{
      * @param body The body off the event you want to add
      */
     createEvent(body : Event) : Observable<ControlResponse>{
-      // TODO : assert no ID
+      // An creation body should not provide _id field
+      assert(body._id == undefined)
       let eventUrl : string = `${environment.baseUrl}control/event/`
       return this.http.post<ControlResponse>(eventUrl, body, this.httpOpt)
     }
 
     postMessage(body) {
-      // TODO assert body
+      // An creation body should not provide _id field
+      assert(body._id == undefined)
       let url : string = `${environment.baseUrl}control/msg/`
       return this.http.post<ControlResponse>(url, body, this.httpOpt)
     }
 
     getMessages(body) {
-      // TODO assert body
       let url : string = `${environment.baseUrl}control/getMsg/`
       return this.http.post<Message[]>(url, body, this.httpOpt)
     }
 
     getIncomingMessage(){
-      // TODO : Assert stuff
       let hourLessDay : Date = new Date()
       hourLessDay.setHours(0,0,0,0)
       let body = {
@@ -101,7 +110,6 @@ export class EventsService{
     }
 
     getOldMessage(){
-      // TODO : Assert stuff
       let hourLessDay : Date = new Date()
       hourLessDay.setHours(0,0,0,0)
       let body = {
@@ -112,19 +120,20 @@ export class EventsService{
     }
 
     updateMesssage(body) {
-      // TODO assert body
+      // An edition body should provide _id field
+      assert(body._id != undefined)
       let url : string = `${environment.baseUrl}control/msg/`
       return this.http.put<ControlResponse>(url, body, this.httpOpt)
     }
 
     deleteMessage(messageID : string){
-      // TODO assert body
+      assert(messageID != "");
       let url : string = `${environment.baseUrl}control/msg/${messageID}`
       return this.http.delete<ControlResponse>(url,this.httpOpt)
     }
 
     login(user : string, password : string){
-      // TODO assert body
+      assert(user != "" && password != "");
       let url : string = `${environment.baseUrl}user/auth/`
       return this.http.post(url, {
         username : user,
@@ -133,6 +142,7 @@ export class EventsService{
     }
 
     postFile(fileToUpload: File){
+      assert(fileToUpload != undefined);
       let url : string = `${environment.baseUrl}cloud/`
       const formData: FormData = new FormData();
       formData.append('file', fileToUpload, fileToUpload.name);
@@ -140,7 +150,6 @@ export class EventsService{
   }
 
     checkAuth(){
-      // TODO assert body
       let url : string = `${environment.baseUrl}user/checkauth/`
       return this.http.get(url, this.httpOpt);
     }

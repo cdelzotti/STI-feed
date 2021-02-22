@@ -6,6 +6,7 @@ import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dial
 import { environment } from '../../environments/environment';
 import { Router, ActivatedRoute } from '@angular/router';
 import { response } from 'express';
+import { promise } from 'selenium-webdriver';
 
 @Component({
   selector: 'event-list',
@@ -21,8 +22,9 @@ export class EventListComponent implements OnInit {
     private route: ActivatedRoute){
     }
 
-  events : Event[]
-  controlResponse : ControlResponse
+  events : Event[];
+  controlResponse : ControlResponse;
+  refreshMessage : string;
 
   // Lambda function to retreive an event from its id
   eventRetreiver = (eventID : string) : Event => {
@@ -40,6 +42,23 @@ export class EventListComponent implements OnInit {
    */
   getEvents():void{
       this.eventService.getEvents().subscribe(events => (this.events = events));
+  }
+
+  /**
+   * Ask the server to refresh his event list
+   */
+  async refreshEvents() : Promise<void> {
+    this.refreshMessage = "Rafraichissement en cours...";
+    this.eventService.refreshEvents().subscribe( response => {
+      // If the server didn't encoutered any errors
+      if (!response.error) {
+        // reload page
+        this.ngOnInit();
+        this.refreshMessage = ""
+      } else {
+        this.refreshMessage = "Une erreur est survenue, impossible de rafraichir tous les évènements."
+      }
+    })
   }
 
   /**

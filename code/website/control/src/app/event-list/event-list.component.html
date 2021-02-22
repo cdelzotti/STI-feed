@@ -1,5 +1,8 @@
 <h2>Évènements à venir</h2>
 
+<span>{{ refreshMessage }}</span><br/>
+
+<a class="button fancy-button publishButton" (click)="refreshEvents()"><mat-icon>refresh</mat-icon> Rafraîchir</a>
 <a class="button fancy-button publishButton" (click)="addEvent()"><mat-icon>add</mat-icon> Nouveau</a>
 
 <table>
