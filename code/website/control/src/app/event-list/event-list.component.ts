@@ -5,8 +5,32 @@ import { ControlResponse } from './controlResponse'
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { environment } from '../../environments/environment';
 import { Router, ActivatedRoute } from '@angular/router';
-import { response } from 'express';
-import { promise } from 'selenium-webdriver';
+import * as assert from 'assert'
+
+  /**
+   * Checks if date1 happens before date2
+   * 
+   * @param date1 date in string format : YYYY-MM-DD
+   * @param date2 date in string format : YYYY-MM-DD
+   */
+   export function happensBefore(date1 : string, date2 : string) : boolean {
+    let splitDate1 : string[] = date1.split("-");
+    let splitDate2 : string[] = date2.split("-");
+    
+    assert(splitDate1.length == 3 && splitDate2.length == 3);
+
+    // If year of date2 is smaller than year of date1
+    if (+splitDate2[0] < +splitDate1[0]) {
+      return false;
+    // If month of date2 is smaller than day of date 1
+    } else if (+splitDate2[0] == +splitDate1[0] && +splitDate2[1] < +splitDate1[1]) {
+      return false;
+    // If day of date2 is smaller than day of date 1
+    } else if (+splitDate2[0] == +splitDate1[0] && +splitDate2[1] == +splitDate1[1] && +splitDate2[2] < +splitDate1[2]) {
+      return false;
+    }
+    return true;
+  }
 
 @Component({
   selector: 'event-list',
@@ -65,8 +89,11 @@ export class EventListComponent implements OnInit {
    * Show a dialog box allowing event edition
    * 
    * @param id Event identifier
+   * @requires id != ""
    */
   edit(id : string) : void {
+    assert(id != "");
+
     // retrieve event details
     let event : Event = this.eventRetreiver(id);
 
@@ -83,7 +110,10 @@ export class EventListComponent implements OnInit {
     
   }
 
-
+  /**
+   * Show a dialog box allowing event creation
+   * 
+   */
   addEvent() : void {
         // Open dialog box
         const dialogRef = this.dialog.open(EventListCreateDialog, {
@@ -102,7 +132,15 @@ export class EventListComponent implements OnInit {
         });
   }
 
+  /**
+   * Creates an empty message related to `id` and redirects to the message edition page
+   * for further edition
+   * 
+   * @param id : Event_id, this function will create a message related to it.
+   * @requires id != ""
+   */
   addMessage(id : string): void {
+    assert(id != "")
     // Create an empty event
     this.eventService.postMessage({
       relatedEvent : id
@@ -145,10 +183,6 @@ export class EventListEditDialog {
     this.eventToEdit = data.eventEdit;
     this.fromPage = data.fromPage;
     this.backUrl = environment.baseUrl;
-  }
-
-  handleImage(){
-    this.image = (<HTMLInputElement>document.getElementById("editEventFileInput")).files[0]; 
   }
 
   submit() {
@@ -205,7 +239,6 @@ export class EventListCreateDialog{
 
   submit(){
     // Check that minimal fields are filled
-    // TODO assert dateFIn > Date debut
     this.errorMessage = "";
     if (this.localisation == undefined || this.localisation == '') {
       this.errorMessage = "Lieu non spécifié";
@@ -215,6 +248,8 @@ export class EventListCreateDialog{
       this.errorMessage = "Date de commencement non spécifiée";
     } else if (this.dateFin == undefined || this.dateFin == '') {
       this.errorMessage = "Date de fin non spécifiée";
+    } else if (!happensBefore(this.dateDebut, this.dateFin)) {
+      this.errorMessage = "La date de fin arrive avant la date de début."
     } else {
       // Assign default values
       if (this.relevant == undefined) {

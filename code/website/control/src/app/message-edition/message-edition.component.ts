@@ -3,7 +3,8 @@ import { EventsService } from "../events.service"
 import { Router, ActivatedRoute } from '@angular/router';
 import { Event } from '../event-list/event'
 import {environment} from '../../environments/environment';
-
+import { happensBefore } from '../event-list/event-list.component';
+import * as assert from 'assert'
 
 @Component({
   selector: 'app-message-edition',
@@ -78,12 +79,17 @@ export class MessageEditionComponent implements OnInit {
     this.published = true;
   }
 
+
   uploadFile(files : FileList){
+    assert(files != undefined)
     this.eventService.postFile(files.item(0)).subscribe(response => {
       this.fileLink = response["link"];
     });
   }
 
+  /**
+   * Submit the message to the server
+   */
   addMessage() : void{
     // Empty the error warning
     this.errorMessage = ""
@@ -96,6 +102,8 @@ export class MessageEditionComponent implements OnInit {
       this.errorMessage = "Titre non spécifié"
     } else if (this.content == undefined) {
       this.errorMessage = "Aucun contenu n'est spécifié"
+    } else if (!happensBefore(this.dateDebut, this.dateFin)) {
+      this.errorMessage = "La date de début arrive après la date de fin."
     } else {
       // Handle message posting
       // Set default type if necessary
@@ -142,23 +150,5 @@ export class MessageEditionComponent implements OnInit {
         });
     }
   }
-  }
-
-
-  /**
-   * returns true if date1 > date 2
-   * 
-   * @param date1 [month, day, year]
-   * @param date2 [month, day, year]
-   */
-  compDate(date1 : [number, number, number], date2 :[number, number, number]) : boolean{
-    if (date2[2] > date1[2]) {
-      return false;
-    } else if (date2[0] > date1[0]) {
-      return false;
-    } else if (date2[1] > date1[1]) {
-      return false;
-    }
-    return false;
   }
 }
