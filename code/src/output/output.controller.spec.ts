@@ -26,6 +26,6 @@ describe('outputController', () => {
     });
 
     it("should not crash", async () => {
-        expect(await outputService.getPublicEvents()).toEqual([]);
+        expect(await outputService.getMessages({})).toEqual([]);
     })
 });

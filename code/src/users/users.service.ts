@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './users.entity'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository, ObjectID } from 'typeorm';
+import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
+import { ObjectID } from 'mongodb';
 
 @Injectable()
 export class UsersService {
@@ -73,8 +74,8 @@ export class UsersService {
      * ```
      *{
      *    _id : "myMongoID"    
-     *    username : "admin",
-     *   password : "sti-feed"
+     *    username : "admin", (optional)
+     *   password : "sti-feed" (optional)
      * }
      * ```
      */

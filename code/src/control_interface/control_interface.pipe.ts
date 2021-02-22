@@ -124,6 +124,11 @@ class EventChecker{
         throw new BadRequestException(`${key} is not a valid key`)
       }
     }
+    if (thingReceived.dateDebut != undefined && thingReceived.dateFin != undefined) {
+      if (thingReceived.dateDebut > thingReceived.dateFin) {
+        throw new BadRequestException("dateDebut happens after dateFin");
+      }
+    }
     return thingReceived;
   }
 }

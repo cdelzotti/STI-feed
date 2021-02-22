@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import { EventData } from './data/data.entity'
 import { Messages } from './control_interface/control_interface.entity'
+import { User } from './users/users.entity'
 
 
 const mongod = new MongoMemoryServer();
@@ -21,7 +22,8 @@ export default (customOpts: any = {}) => TypeOrmModule.forRootAsync({
         useUnifiedTopology: true,
         entities: [
             EventData,
-            Messages
+            Messages,
+            User
         ],
         ...customOpts,
       };

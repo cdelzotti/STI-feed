@@ -33,29 +33,29 @@ describe('control', () => {
         // Add event
         const responseAdd = await controlController.addEvent({
             source : "testEdit",
-            relevant : false,
-            message : "Edition Untested"
+            localisation : "Mons"
         });
         expect(responseAdd.error).toBe(false);
         // Edit events
         const responseEdit = await controlController.editEvent({
             _id : responseAdd._id,
-            message : "Edition Tested"
+            localisation : "Liège"
         });
         expect(responseEdit.error).toBe(false);
         // Retrieve event
         let responseGet = await controlController.getEvents({
             _id : responseAdd._id
         })
-        expect(responseGet[0].message).toBe("Edition Tested")
+        expect(responseGet[0].localisation).toBe("Liège")
         // Delete events
         const responseDelete = await controlController.deleteEvent({
             _id : responseAdd._id
         })
+        expect(responseDelete.error).toBe(false);
         // try to retrieve event
         responseGet = await controlController.getEvents({
             _id : responseAdd._id
-        })
+        });
         expect(responseGet).toEqual([]);
     })
 
@@ -71,30 +71,13 @@ describe('control', () => {
         }
         expect(errorDetected).toBe(true)
         })
-
-     it("should be able to reference an image", async () => {
-            // Add event
-            const responseAdd = await controlController.addEvent({
-                source : "testEdit",
-                relevant : false,
-                message : "Edition Untested"
-            });
-            // Add an attachment
-            const responseAttach = controlService.registerAttached(new ObjectID(responseAdd._id), `${responseAdd._id}.png`)
-            // Retrieve event
-            const responseGet = await controlController.getEvents({
-                _id : responseAdd._id
-            })
-            expect(responseGet[0].attachedFile).toBe(`${responseAdd._id}.png`)
-        })
-
         it("should be able to do CRUD actions for msg", async () => {
             // Add an event for referencial purpose
             // Add event
             const responseAdd = await controlController.addEvent({
                 source : "testMsg",
-                relevant : false,
-                message : "Msg placeholder event"
+                localisation : "Namur",
+                impact : "Blocage des routes"
             });
             expect(responseAdd.error).toBe(false);
             // Add a message
@@ -104,8 +87,9 @@ describe('control', () => {
                 title : "Test message",
                 content : "PLOUF",
                 type : "TEST",
+                published : false,
                 relatedEvent : responseAdd._id
-            })
+            });
             expect(responseMsgAdd.error).toBe(false);
             // retreive a message
             let responseGetMsg = await controlController.getMsg({
