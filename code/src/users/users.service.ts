@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { ObjectID } from 'mongodb';
+import * as assert from 'assert';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +26,8 @@ export class UsersService {
      * ```
      */
     async createUser(user){
+        assert(user != undefined && user != {}, "uer must me specified")
+
         await this.userRepository.insert(user);
         return user;
     }
@@ -41,6 +44,11 @@ export class UsersService {
      * ```
      */
     async getUser(user){
+        // No assert possible on body as it defines constraints for the
+        // current query, so an empty body just means no constraints and
+        // an invalid body will just return an empty query. Nothing but determined
+        // behavior.
+
         if (user != undefined && user != {}) {    
             return this.userRepository.findOne(user);
         }
@@ -61,6 +69,8 @@ export class UsersService {
      * ```
      */
     async editUser(user){
+        assert(user._id != undefined, "Must provide an id for event edition");
+
         user._id = new ObjectID(user._id);
         await this.userRepository.save(user);
         return user;
@@ -80,6 +90,8 @@ export class UsersService {
      * ```
      */
     async deleteUser(user){
+        assert(user._id != undefined, "Must provide an id for event deletion");
+
         user._id = new ObjectID(user._id);
         await this.userRepository.delete(user);
         return {
@@ -87,7 +99,7 @@ export class UsersService {
         }
     }
 
-    // AUTH : based on tutorials and documentation provided by NestJS : https://docs.nestjs.com/security/authentication
+    // AUTH : based on documentation provided by NestJS : https://docs.nestjs.com/security/authentication
 
 
     /**
@@ -97,6 +109,8 @@ export class UsersService {
      * @param pass 
      */
     async validateUser(username: string, pass: string): Promise<any> {
+        assert(username != "" && pass != "", "username and pass must be specified")
+
         const user = await this.getUser({
             username : username,
             password : pass
@@ -120,6 +134,8 @@ export class UsersService {
        * ```
        */
       async login(user: any) {
+        assert(user != undefined, "user must be specified !")
+
         const payload = { username: user.username, sub: user._id };
         return {
           access_token: this.jwtService.sign(payload),

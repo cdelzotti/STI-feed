@@ -14,13 +14,17 @@ export class OutputService {
         private messagesRepository : Repository<Messages>
     ){}
 
-        /**
+    /**
      * Get every up to date Messages 
      * 
      * @returns select pubished events
      */
     async getMessages(body) : Promise<Messages[]> {
-        // TODO : Limiter la date
+        // No assert possible on body as it defines constraints for the
+        // current query, so an empty body just means no constraints and
+        // an invalid body will just return an empty query. Nothing but determined
+        // behavior.
+        
         // Returns only published event
         body.published = true;
          return this.messagesRepository.find({

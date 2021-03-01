@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { EventData } from './data.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { DataResponse } from './data.dto'
-
+import * as assert from 'assert';
 
 @Injectable()
 export class DataService {
@@ -23,6 +23,8 @@ export class DataService {
      * @returns a DataResponse file independently of the storage sucess
      */
     async APextract(path : string) : Promise<DataResponse> {
+        assert(path != "", "Path must be specified");
+
         // Get Excel content
         const workbook = new Workbook();
         await workbook.xlsx.readFile(path);
@@ -82,6 +84,8 @@ export class DataService {
      * dbContent
      */
     workAroundForDates(currentEvent : EventData, dbContent : EventData[]) : number {
+        assert(currentEvent != undefined && dbContent != undefined);
+
          // Check dates
          let matches : number = 0; // Alike event counter
          // Get currentEvent dates in a nice list
@@ -124,10 +128,10 @@ export class DataService {
      * Check if two arrays are equals
      * @param a1 an array
      * @param a2 an other array
-     * @returns true if a1 contains the same thing in the same order that a2, false otherwise
+     * @returns true if a1 contains the same thing in the same order than a2, false otherwise
      */
     arrayEquals(a1, a2) : boolean{
-        // TODO : assert a1 and a2 are arrays
+        assert(a1.length >=0 && a2.length >= 0, "Args cannot use length property, they cannot be arrays !");
         if (a1.length == a2.length) {
             for (let index = 0; index < a1.length; index++) {
                 if (a1[index] != a2[index]) {
