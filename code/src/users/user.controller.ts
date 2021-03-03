@@ -19,6 +19,7 @@ export class UserController {
      * }
      * ```
    */
+  @UseGuards(JwtAuthGuard)
   @Post()
   async addUser(@Body() user) {
     return this.userService.createUser(user);
@@ -35,6 +36,7 @@ export class UserController {
      * }
      * ```
    */
+  @UseGuards(JwtAuthGuard)
   @Put()
   async editUser(@Body() user){
     return this.userService.editUser(user);
@@ -51,6 +53,7 @@ export class UserController {
      * }
      * ```
    */
+  @UseGuards(JwtAuthGuard)
   @Delete()
   async deleteUser(@Body() user){
     return this.userService.deleteUser(user);

@@ -103,6 +103,11 @@ You can use both websites by following these routes :
 - **Control website** : `{base_URL}/control-site/`
 - **Public website** : `{base_URL}/public-site/`
 
+Default logs are 
+
+- **username :** admin 
+- **password :** sti-feed 
+
 ## What's next ?
 
 This project implements specific functionalities but lacks basic ones such as user management. You'll be able to create your own user accounts following the documentation provided in `src/users/user.controller.ts`. This user feature is implemented on backend side but not yet on frontend side.

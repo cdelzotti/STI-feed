@@ -11,15 +11,7 @@ import { ObjectID } from 'mongodb';
 @Controller("control/")
 export class ControlInterfaceController {
   constructor(private readonly controlInterfaceService: ControlInterfaceService) {}
-
-  /**
-   * @returns the control interface
-   */
-  @Get()
-  getControlPage(@Res() response : Response) {
-    response.redirect("/control-site/index.html");
-  }
-
+  
   /**
    * 
    * @param body a piece of an EventData object
