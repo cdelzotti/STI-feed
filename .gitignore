@@ -1,6 +1,7 @@
 node_modules
 db.sqlite
-dist
+code/*/dist
+code/dist
 mongoData
 coverage
 code/static/tinymce
